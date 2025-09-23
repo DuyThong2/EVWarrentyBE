@@ -1,4 +1,4 @@
-﻿namespace Ordering.Domain.Abstractions;
+﻿namespace WarrantyClaim.Domain.Abstractions;
 
 public interface IEntity<T> : IEntity
 {

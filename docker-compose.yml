@@ -2,10 +2,21 @@ services:
 
   messagebroker:
     image: rabbitmq
-
+ 
+  
 
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
     build:
       context: .
       dockerfile: ApiGateway/YarpApiGateway/Dockerfile
+
+  claimdb:
+    image: mcr.microsoft.com/mssql/server
+
+  warrantyclaimAPI:
+    image: duythong2/warrantyclaim
+    build:
+      context: .
+      dockerfile: Services/WarrantyClaimService/WarrantyClaim.API/Dockerfile
+
