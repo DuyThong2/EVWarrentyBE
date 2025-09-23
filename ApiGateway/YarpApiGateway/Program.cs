@@ -30,8 +30,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //// Reverse Proxy (YARP)
-//builder.Services.AddReverseProxy()
-//    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 // Rate Limiter
 builder.Services.AddRateLimiter(options =>
@@ -57,8 +57,8 @@ app.UseSwaggerUI(c =>
 {
     var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerSourceSetting>>().Value;
 
-    //c.SwaggerEndpoint(swaggerOptions.Catalog, "Catalog API");
-    
+    c.SwaggerEndpoint(swaggerOptions.WarrantyClaim, "Warrenty Claim API");
+
 });
 
 // CORS
@@ -72,10 +72,8 @@ app.UseRouting();
 
 
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapReverseProxy();
-//});
+app.MapReverseProxy();
+
 
 // Optional: root test
 app.MapGet("/", () =>

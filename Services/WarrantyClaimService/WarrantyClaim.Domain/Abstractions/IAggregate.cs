@@ -1,4 +1,4 @@
-﻿namespace Ordering.Domain.Abstractions;
+﻿namespace WarrantyClaim.Domain.Abstractions;
 
 public interface IAggregate<T> : IAggregate, IEntity<T>
 {

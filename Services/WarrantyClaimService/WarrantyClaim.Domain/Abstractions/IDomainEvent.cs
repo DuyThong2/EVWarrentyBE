@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Ordering.Domain.Abstractions;
+namespace WarrantyClaim.Domain.Abstractions;
 public interface IDomainEvent : INotification
 {
     Guid EventId => Guid.NewGuid();
