@@ -18,9 +18,9 @@ namespace EVWUser.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginCommand cmd, CancellationToken ct)
+        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginCommand request, CancellationToken ct)
         {
-            var result = await _mediator.Send(cmd, ct);
+            var result = await _mediator.Send(request, ct);
             return Ok(result);
         }
     }

@@ -8,8 +8,11 @@ namespace EVWUser.API.Extensions.AutoMapper
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserDto>().ForMember(dest => dest.Roles,
-                opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name).ToList()));
+            CreateMap<User, UserDto>()
+                .ForMember(dest => dest.Status,
+                           opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Roles,
+                           opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)));
         }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using EVWUser.API.Data;
 using EVWUser.API.Dtos;
 using EVWUser.API.Extensions.Jwt;
 using EVWUser.API.Models;
+using EVWUser.API.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,18 +25,27 @@ namespace EVWUser.API.Auth.Login
             _mapper = mapper;
         }
 
-        public async Task<LoginResult> Handle(LoginCommand command, CancellationToken cancellationToken)
+        public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.Where(u => u.Email.ToLower() == command.LoginRequest.Email.ToLower()).FirstOrDefaultAsync(cancellationToken) ?? 
-                throw new BadRequestException("Email does not exist");
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.LoginRequest.Email.ToLower(), cancellationToken)
+            ?? throw new BadRequestException("Email does not exist");
 
-            var isPasswordValid = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, command.LoginRequest.Password);
+            if (user.Status != UserStatus.ACTIVE)
+            {
+                throw new BadRequestException("User is inactive or locked by the EVM Staff");
+            }
+
+            var userDto = await _context.Users
+                .Where(u => u.UserId == user.UserId)
+                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                .FirstAsync(cancellationToken);
+
+            var isPasswordValid = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.LoginRequest.Password);
             if (isPasswordValid == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid password");
             }
 
-            var userDto = _mapper.Map<UserDto>(user);
             var token = _jwtService.GenerateJwtToken(user);
 
             return new LoginResult(new LoginResponse
@@ -43,7 +54,7 @@ namespace EVWUser.API.Auth.Login
                 Token = new TokenResponse
                 {
                     AccessToken = token,
-                    ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+                    ExpiresAt = DateTime.Now.AddMinutes(60)
                 }
             });
         }
