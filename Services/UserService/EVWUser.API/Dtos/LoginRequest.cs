@@ -10,6 +10,7 @@ namespace EVWUser.API.Dtos
 
         [Required(ErrorMessage = "Password can't be blank")]
         public string Password { get; set; } = null!;
+
         
     }
 }
