@@ -58,6 +58,7 @@ app.UseSwaggerUI(c =>
     var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerSourceSetting>>().Value;
 
     c.SwaggerEndpoint(swaggerOptions.WarrantyClaim, "Warrenty Claim API");
+    c.SwaggerEndpoint(swaggerOptions.VehicleClaim, "Vehicle API");
 
 });
 
