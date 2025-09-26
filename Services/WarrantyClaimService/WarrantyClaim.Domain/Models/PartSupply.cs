@@ -9,7 +9,7 @@ namespace WarrantyClaim.Domain.Models
 {
     public class PartSupply : Entity<Guid>
     {
-        public Guid ClaimItemId { get; set; }
+        public Guid? ClaimItemId { get; set; }
         public Guid? PartId { get; set; }
         public string? Description { get; set; }
         public string? NewSerialNumber { get; set; } // varchar(100)
@@ -18,6 +18,6 @@ namespace WarrantyClaim.Domain.Models
         public SupplyStatus Status { get; set; }
 
         // Navs
-        public ClaimItem ClaimItem { get; set; } = null!;
+        public ClaimItem ? ClaimItem { get; set; } = null!;
     }
 }
