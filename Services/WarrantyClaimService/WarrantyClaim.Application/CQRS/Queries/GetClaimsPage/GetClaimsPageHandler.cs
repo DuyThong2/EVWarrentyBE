@@ -46,4 +46,4 @@ namespace WarrantyClaim.Application.CQRS.Queries.GetClaimsPage
         }
     }
 }
-}
+
