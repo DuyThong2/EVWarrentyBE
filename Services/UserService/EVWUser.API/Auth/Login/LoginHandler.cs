@@ -27,36 +27,48 @@ namespace EVWUser.API.Auth.Login
 
         public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.LoginRequest.Email.ToLower(), cancellationToken)
-            ?? throw new BadRequestException("Email does not exist");
-
-            if (user.Status != UserStatus.ACTIVE)
+            try
             {
-                throw new BadRequestException("User is inactive or locked by the EVM Staff");
-            }
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == request.LoginRequest.Email.ToLower(), cancellationToken)
+                ?? throw new BadRequestException("Email does not exist");
 
-            var userDto = await _context.Users
-                .Where(u => u.UserId == user.UserId)
-                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .FirstAsync(cancellationToken);
-
-            var isPasswordValid = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.LoginRequest.Password);
-            if (isPasswordValid == PasswordVerificationResult.Failed)
-            {
-                throw new BadRequestException("Invalid password");
-            }
-
-            var token = _jwtService.GenerateJwtToken(user);
-
-            return new LoginResult(new LoginResponse
-            {
-                User = userDto,
-                Token = new TokenResponse
+                if (user.Status != UserStatus.ACTIVE)
                 {
-                    AccessToken = token,
-                    ExpiresAt = DateTime.Now.AddMinutes(60)
+                    throw new BadRequestException("User is inactive or locked by the EVM Staff");
                 }
-            });
+
+                //Get roles by auto mapper, ignore include
+                var userDto = await _context.Users
+                    .Where(u => u.UserId == user.UserId)
+                    .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                    .FirstAsync(cancellationToken);
+
+                var isPasswordValid = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, request.LoginRequest.Password);
+                if (isPasswordValid == PasswordVerificationResult.Failed)
+                {
+                    throw new BadRequestException("Invalid password");
+                }
+
+                var token = _jwtService.GenerateJwtToken(user);
+
+                return new LoginResult(new LoginResponse
+                {
+                    User = userDto,
+                    Token = new TokenResponse
+                    {
+                        AccessToken = token,
+                        ExpiresAt = DateTime.Now.AddMinutes(60)
+                    }
+                });
+            }
+            catch (BadRequestException ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred during login. Please try again later.");
+            }
         }
     }
 }

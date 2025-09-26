@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Behaviors;
+using BuildingBlocks.Exceptions.Handler;
 using EVWUser.API.Data;
 using EVWUser.API.Data.Extensions;
 using EVWUser.API.Extensions.AutoMapper;
@@ -25,6 +26,8 @@ builder.Services.AddMediatR(config =>
 
 // AutoMapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfiles).Assembly);
+
+//builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 // Configuration
 builder.Configuration
@@ -53,8 +56,7 @@ builder.Services.AddControllers();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
+builder.Services.AddSwaggerGen(c =>{
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "EVW User API",
@@ -90,7 +92,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
+//app.UseExceptionHandler();
 app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
@@ -112,7 +114,6 @@ app.UseSwagger(c =>
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "EVW User API V1");
-    c.RoutePrefix = "swagger";
 });
 
 app.MapControllers();

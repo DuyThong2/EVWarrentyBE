@@ -17,11 +17,21 @@ namespace EVWUser.API.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// User login.
+        /// </summary>
+        /// <description>
+        /// Allows a user to log in using their email and password.  
+        /// On success, returns an access token, expiry time, and user information.  
+        /// </description>
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginCommand request, CancellationToken ct)
+        public async Task<ActionResult> Login([FromBody] LoginCommand request, CancellationToken ct)
         {
             var result = await _mediator.Send(request, ct);
-            return Ok(result);
+            return Ok(ApiResponse<LoginResult>.Ok(result, "Login successfully"));
         }
     }
 }
