@@ -20,3 +20,12 @@ services:
       context: .
       dockerfile: Services/WarrantyClaimService/WarrantyClaim.API/Dockerfile
 
+  userdb:
+    image: mcr.microsoft.com/mssql/server
+
+  userAPI:
+    image: nhatk/userapi
+    build:
+      context: .
+      dockerfile: Services/UserService/EVWUser.API/Dockerfile
+
