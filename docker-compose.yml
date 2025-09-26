@@ -29,3 +29,12 @@ services:
       context: .
       dockerfile: Services/CarRegisterService/Vehicle.API/Dockerfile
 
+  partdb:
+    image: mcr.microsoft.com/mssql/server
+
+  partcatalogAPI:
+    image: vunt/partcatalogapi
+    build:
+      context: .
+      dockerfile: Services/PartCatalogService/PartCatalog.API/Dockerfile
+

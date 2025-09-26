@@ -59,6 +59,7 @@ app.UseSwaggerUI(c =>
 
     c.SwaggerEndpoint(swaggerOptions.WarrantyClaim, "Warrenty Claim API");
     c.SwaggerEndpoint(swaggerOptions.VehicleClaim, "Vehicle API");
+    c.SwaggerEndpoint(swaggerOptions.PartCatalog, "Part Catalog API");
 
 });
 

@@ -8,6 +8,7 @@
         public string VehicleClaim { get; set; } = string.Empty;
 
 
+        public string PartCatalog { get; set; } = string.Empty;
 
     }
 }
