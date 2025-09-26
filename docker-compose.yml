@@ -28,7 +28,7 @@ services:
 
 
 
-  partcatalog.api:
+  partcatalogAPI:
     image: vunt/partcatalogapi
     build:
       context: .
