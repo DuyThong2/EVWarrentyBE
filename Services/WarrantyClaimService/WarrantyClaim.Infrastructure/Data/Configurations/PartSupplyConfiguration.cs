@@ -50,7 +50,7 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
             b.HasOne(x => x.ClaimItem)
                 .WithMany(x => x.PartSupplies)
                 .HasForeignKey(x => x.ClaimItemId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

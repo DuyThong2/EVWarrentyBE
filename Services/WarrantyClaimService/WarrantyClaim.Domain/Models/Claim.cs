@@ -20,6 +20,9 @@ namespace WarrantyClaim.Domain.Models
 
         // Navs
         public ICollection<ClaimItem> Items { get; set; } = new List<ClaimItem>();
+
+        public Technician ? Technician { get; set; }
+
         //public ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
     }
 
