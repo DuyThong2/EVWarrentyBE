@@ -20,3 +20,17 @@ services:
       context: .
       dockerfile: Services/WarrantyClaimService/WarrantyClaim.API/Dockerfile
 
+  partdb:
+    image: mcr.microsoft.com/mssql/server
+
+  
+
+
+
+
+  partcatalog.api:
+    image: vunt/partcatalogapi
+    build:
+      context: .
+      dockerfile: Services/PartCatalogService/PartCatalog.API/Dockerfile
+

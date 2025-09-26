@@ -21,7 +21,7 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
       - "8000:8080" 
-      - "8080:8081"
+      - "8089:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -65,6 +65,44 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
+  partdb:
+    container_name: partdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=12345678a
+    restart: always
+    ports:
+      - "1436:1433"
+    volumes:
+      - partdb_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/1433' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 6s
+
+  partcatalog.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=partdb,1433;Database=PartCatalogDb;User Id=sa;Password=12345678a;Encrypt=False;TrustServerCertificate=True
+
+    ports:
+      - "8387:8080"
+      - "8386:8081"
+    depends_on:
+      partdb:
+        condition: service_healthy
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 volumes:
   claimdb_data:
+  partdb_data:
+
+
 
