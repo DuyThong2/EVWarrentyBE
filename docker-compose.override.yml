@@ -69,7 +69,7 @@ services:
     container_name: partdb
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=12345678a
+      - SA_PASSWORD=12345678Aa
     restart: always
     ports:
       - "1436:1433"
@@ -82,12 +82,12 @@ services:
       retries: 3
       start_period: 6s
 
-  partcatalog.api:
+  partcatalogAPI:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database=Server=partdb,1433;Database=PartCatalogDb;User Id=sa;Password=12345678a;Encrypt=False;TrustServerCertificate=True
+      - ConnectionStrings__Database=Server=partdb,1433;Database=PartCatalogDb;User Id=sa;Password=12345678Aa;Encrypt=False;TrustServerCertificate=True
 
     ports:
       - "8387:8080"
