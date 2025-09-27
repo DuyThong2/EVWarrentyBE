@@ -90,6 +90,9 @@ namespace EVWUser.API.Services.Impl
             if (string.IsNullOrWhiteSpace(request.Password))
                 throw new BadRequestException("Password is required");
 
+            if (request.Roles == null || !request.Roles.Any())
+                throw new BadRequestException("At least one role is required");
+
             var user = _mapper.Map<User>(request);
             user.UserId = Guid.NewGuid();
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
@@ -150,12 +153,8 @@ namespace EVWUser.API.Services.Impl
                 }
                 var userRole = new UserRole
                 {
-                    //UserRoleId = Guid.NewGuid(),
                     UserId = user.UserId,
-                    //User = user,
                     RoleId = roleId,
-                    //Role = role,
-                    //CreatedAt = DateTime.UtcNow
                 };
                 try
                 {
