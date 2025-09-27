@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "ApiGateway\\YarpApiGateway\\YarpApiGateway.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\WarrantyClaimService\\WarrantyClaim.API\\WarrantyClaim.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Services\\UserService\\EVWUser.API\\EVWUser.API.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

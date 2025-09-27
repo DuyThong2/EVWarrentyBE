@@ -26,6 +26,10 @@ namespace EVWUser.API.Data.Configurations
             builder.Property(r => r.CreatedAt).HasColumnName("createdAt");
 
             builder.Property(r => r.UpdatedAt).HasColumnName("updatedAt");
+
+            builder.HasMany(r => r.UserRoles)
+                   .WithOne(ur => ur.Role)
+                   .HasForeignKey(ur => ur.UserId);
         }
     }
 }

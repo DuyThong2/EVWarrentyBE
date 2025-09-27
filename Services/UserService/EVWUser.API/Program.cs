@@ -4,11 +4,17 @@ using EVWUser.API.Data;
 using EVWUser.API.Data.Extensions;
 using EVWUser.API.Extensions.AutoMapper;
 using EVWUser.API.Extensions.Jwt;
+using EVWUser.API.Repositories;
+using EVWUser.API.Repositories.Impl;
+using EVWUser.API.Services;
+using EVWUser.API.Services.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +33,11 @@ builder.Services.AddMediatR(config =>
 // AutoMapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfiles).Assembly);
 
-//builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+//builder.Services.AddScoped<IGenericRepository, GenericRepository>();
 
 // Configuration
 builder.Configuration
@@ -52,6 +62,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+//Cross-Cutting Services
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
 builder.Services.AddControllers();
 
 // Swagger
@@ -62,6 +77,10 @@ builder.Services.AddSwaggerGen(c =>{
         Title = "EVW User API",
         Version = "v1"
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
 // CORS
@@ -78,7 +97,12 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 app.MapGet("/", () => "Hello World!");
 
@@ -115,6 +139,7 @@ app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "EVW User API V1");
 });
+//app.UseMiddleware<Application.ExceptionHandler();
 
 app.MapControllers();
 

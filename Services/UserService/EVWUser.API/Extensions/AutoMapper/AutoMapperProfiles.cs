@@ -12,7 +12,9 @@ namespace EVWUser.API.Extensions.AutoMapper
                 .ForMember(dest => dest.Status,
                            opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.Roles,
-                           opt => opt.MapFrom(src => src.UserRoles.Select(ur => ur.Role.Name)));
+                           opt => opt.Ignore());
+
+            CreateMap<UserRequest, User>();
         }
     }
 }
