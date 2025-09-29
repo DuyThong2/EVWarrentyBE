@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Vehicle.API.Enums
+namespace Vehicle.Domain.Enums
 {
     public enum CustomerStatus
     {

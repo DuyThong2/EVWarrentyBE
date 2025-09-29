@@ -1,22 +1,18 @@
-
-using Microsoft.EntityFrameworkCore;
-using Vehicle.API.Data;
-using Vehicle.API.Extensions;
-
+﻿using Microsoft.EntityFrameworkCore;
+using Vehicle.API;
+using Vehicle.Infrastructure.Data;
+using Vehicle.Infrastructure.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<VehicleDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Đăng ký services
+builder.Services
+    .AddApiServices(builder.Configuration) // API layer (Swagger, Controllers,...)
+    .AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Swagger + database init khi Dev
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -24,11 +20,7 @@ if (app.Environment.IsDevelopment())
     await app.InitializeDatabaseAsync();
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-
-app.MapControllers();
+// Middleware + endpoint config
+app.UseApiServices();
 
 app.Run();

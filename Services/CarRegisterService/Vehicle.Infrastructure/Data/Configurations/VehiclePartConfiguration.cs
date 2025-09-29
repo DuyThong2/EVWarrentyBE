@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Vehicle.API.Enums;
-using Vehicle.API.Models;
-
-namespace Vehicle.API.Data.Configurations
+using Vehicle.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace Vehicle.Infrastructure.Data.Configurations
 {
     public class VehiclePartConfiguration : IEntityTypeConfiguration<VehiclePart>
     {
