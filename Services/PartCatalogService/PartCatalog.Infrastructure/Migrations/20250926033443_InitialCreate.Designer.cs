@@ -12,7 +12,7 @@ using PartCatalog.Infrastructure.Data;
 namespace PartCatalog.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250924032005_InitialCreate")]
+    [Migration("20250926033443_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -147,16 +147,16 @@ namespace PartCatalog.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("ACTIVE")
+                        .HasColumnName("status");
 
                     b.Property<string>("Unit")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<short?>("status")
-                        .HasColumnType("smallint")
-                        .HasColumnName("status");
 
                     b.HasKey("PartId");
 

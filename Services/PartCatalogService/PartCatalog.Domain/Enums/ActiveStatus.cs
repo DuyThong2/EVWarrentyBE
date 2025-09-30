@@ -8,7 +8,7 @@ namespace PartCatalog.Domain.Enums
 {
     public enum ActiveStatus
     {
-        ACTIVE = 1,
-        INACTIVE = 2
+        ACTIVE = 0,
+        INACTIVE = 1
     }
 }

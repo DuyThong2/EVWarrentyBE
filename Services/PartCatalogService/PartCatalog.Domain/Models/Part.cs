@@ -15,8 +15,7 @@ namespace PartCatalog.Domain.Models
         public string? Manufacturer { get; set; }
         public string? Unit { get; set; }
         public string? SerialNumber { get; set; }
-        public PartCatalog.Domain.Enums.ActiveStatus? Status { get; set; }
-
+        public ActiveStatus Status { get; set; }
         public Guid? CateId { get; set; }
         public Category? Category { get; set; }
 

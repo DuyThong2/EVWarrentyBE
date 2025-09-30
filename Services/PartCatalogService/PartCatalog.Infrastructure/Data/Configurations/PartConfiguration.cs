@@ -22,7 +22,10 @@ namespace PartCatalog.Infrastructure.Data.Configurations
             builder.Property(p => p.Manufacturer).HasMaxLength(120);
             builder.Property(p => p.Unit).HasMaxLength(20);
             builder.Property(p => p.SerialNumber).HasMaxLength(100);
-            builder.Property<short?>("status").HasColumnName("status"); // or map enum directly
+            builder.Property(p => p.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValue(ActiveStatus.ACTIVE) // your enum PartStatus
+                    .HasConversion(s => s.ToString(), dbStatus => (ActiveStatus)Enum.Parse(typeof(ActiveStatus), dbStatus));
             builder.HasIndex(p => p.Name).HasDatabaseName("ix_part_name");
 
             builder.HasOne(p => p.Category).WithMany(c => c.Parts).HasForeignKey(p => p.CateId).OnDelete(DeleteBehavior.SetNull);

@@ -64,10 +64,9 @@ namespace PartCatalog.Infrastructure.Migrations
                     Manufacturer = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: true),
                     Unit = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     SerialNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Status = table.Column<int>(type: "int", nullable: true),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "ACTIVE"),
                     CateId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    PackageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    status = table.Column<short>(type: "smallint", nullable: true)
+                    PackageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
