@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Vehicle.API.Data;
+using Vehicle.Infrastructure.Data;
 
 #nullable disable
 
-namespace Vehicle.API.Migrations
+namespace Vehicle.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(VehicleDbContext))]
-    [Migration("20250925184507_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(ApplicationDbContext))]
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +22,7 @@ namespace Vehicle.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Vehicle.API.Models.Customer", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
@@ -95,7 +92,7 @@ namespace Vehicle.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Vehicle.API.Models.Vehicle", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.Vehicle", b =>
                 {
                     b.Property<Guid>("VehicleId")
                         .ValueGeneratedOnAdd()
@@ -198,7 +195,7 @@ namespace Vehicle.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Vehicle.API.Models.VehiclePart", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.VehiclePart", b =>
                 {
                     b.Property<Guid>("PartId")
                         .ValueGeneratedOnAdd()
@@ -272,9 +269,9 @@ namespace Vehicle.API.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Vehicle.API.Models.Vehicle", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.Vehicle", b =>
                 {
-                    b.HasOne("Vehicle.API.Models.Customer", "Customer")
+                    b.HasOne("Vehicle.Domain.Models.Customer", "Customer")
                         .WithMany("Vehicles")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -283,9 +280,9 @@ namespace Vehicle.API.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Vehicle.API.Models.VehiclePart", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.VehiclePart", b =>
                 {
-                    b.HasOne("Vehicle.API.Models.Vehicle", "Vehicle")
+                    b.HasOne("Vehicle.Domain.Models.Vehicle", "Vehicle")
                         .WithMany("Parts")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -294,12 +291,12 @@ namespace Vehicle.API.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Vehicle.API.Models.Customer", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.Customer", b =>
                 {
                     b.Navigation("Vehicles");
                 });
 
-            modelBuilder.Entity("Vehicle.API.Models.Vehicle", b =>
+            modelBuilder.Entity("Vehicle.Domain.Models.Vehicle", b =>
                 {
                     b.Navigation("Parts");
                 });

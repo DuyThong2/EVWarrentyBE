@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Vehicle.API.Enums;
-using Vehicle.API.Models;
+using Vehicle.Domain.Enums;
+using Vehicle.Domain.Models;
 using System;
 
-namespace Vehicle.API.Data
+namespace Vehicle.Infrastructure.Data
 {
     public static class InitialData
     {
@@ -28,7 +28,7 @@ namespace Vehicle.API.Data
 
             // Seed Vehicle
             var vehicleId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
-            modelBuilder.Entity<Vehicle.API.Models.Vehicle>().HasData(new Vehicle.API.Models.Vehicle
+            modelBuilder.Entity<Vehicle.Domain.Models.Vehicle>().HasData(new Vehicle.Domain.Models.Vehicle
             {
                 VehicleId = vehicleId,
                 CustomerId = customerId,

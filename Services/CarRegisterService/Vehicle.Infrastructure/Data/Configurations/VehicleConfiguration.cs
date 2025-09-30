@@ -1,13 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Vehicle.API.Enums;
-using Vehicle.API.Models;
-
-namespace Vehicle.API.Data.Configurations
+using Vehicle.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+namespace Vehicle.Infrastructure.Data.Configurations
 {
-    public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle.API.Models.Vehicle>
+    public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle.Domain.Models.Vehicle>
     {
-        public void Configure(EntityTypeBuilder<Vehicle.API.Models.Vehicle> b)
+        public void Configure(EntityTypeBuilder<Vehicle.Domain.Models.Vehicle> b)
         {
             b.ToTable("vehicle");
 

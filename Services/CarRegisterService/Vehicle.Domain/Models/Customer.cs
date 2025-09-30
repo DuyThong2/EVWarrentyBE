@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Vehicle.API.Enums;
 
-namespace Vehicle.API.Models
+
+namespace Vehicle.Domain.Models
 {
     public class Customer
     {
