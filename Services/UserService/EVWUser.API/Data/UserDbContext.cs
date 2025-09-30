@@ -34,20 +34,31 @@ namespace EVWUser.API.Data
         {
             var now = DateTime.Now;
 
-            foreach (var entry in ChangeTracker.Entries()
-                                               .Where(e => e.Entity is User || e.Entity is Role || e.Entity is UserRole))
+            foreach (var entry in ChangeTracker.Entries())
             {
-                if (entry.State == EntityState.Added)
+                if (entry.Entity is User || entry.Entity is Role)
                 {
-                    entry.Property("CreatedAt").CurrentValue = now;
-                    entry.Property("UpdatedAt").CurrentValue = now;
-                }
+                    if (entry.State == EntityState.Added)
+                    {
+                        entry.Property("CreatedAt").CurrentValue = now;
+                        entry.Property("UpdatedAt").CurrentValue = now;
+                    }
 
-                if (entry.State == EntityState.Modified)
+                    if (entry.State == EntityState.Modified)
+                    {
+                        entry.Property("UpdatedAt").CurrentValue = now;
+                    }
+                }
+                else if (entry.Entity is UserRole)
                 {
-                    entry.Property("UpdatedAt").CurrentValue = now;
+                    if (entry.State == EntityState.Added)
+                    {
+                        entry.Property("CreatedAt").CurrentValue = now;
+                    }
                 }
             }
         }
+
+
     }
 }

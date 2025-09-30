@@ -14,6 +14,10 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/CarRegisterService/Vehicle.API/Vehicle.API.csproj", "Services/CarRegisterService/Vehicle.API/"]
 COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+COPY ["Services/CarRegisterService/Vehicle.Application/Vehicle.Application.csproj", "Services/CarRegisterService/Vehicle.Application/"]
+COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks/BuildingBlocks.Messaging/"]
+COPY ["Services/CarRegisterService/Vehicle.Domain/Vehicle.Domain.csproj", "Services/CarRegisterService/Vehicle.Domain/"]
+COPY ["Services/CarRegisterService/Vehicle.Infrastructure/Vehicle.Infrastructure.csproj", "Services/CarRegisterService/Vehicle.Infrastructure/"]
 RUN dotnet restore "./Services/CarRegisterService/Vehicle.API/Vehicle.API.csproj"
 COPY . .
 WORKDIR "/src/Services/CarRegisterService/Vehicle.API"

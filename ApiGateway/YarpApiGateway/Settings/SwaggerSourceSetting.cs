@@ -10,5 +10,6 @@
 
         public string PartCatalog { get; set; } = string.Empty;
 
+        public string User { get; set; } = string.Empty;
     }
 }
