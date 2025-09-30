@@ -24,8 +24,8 @@ namespace PartCatalog.Infrastructure.Data.Configurations
             builder.Property(p => p.SerialNumber).HasMaxLength(100);
             builder.Property(p => p.Status)
                     .HasColumnName("status")
-                    .HasDefaultValue(ActiveStatus.ACTIVE) // enum PartStatus của bạn
-                    .HasConversion(s => s.ToString(), dbStatus => (ActiveStatus)Enum.Parse(typeof(ActiveStatus), dbStatus)); // or map enum directly
+                    .HasDefaultValue(ActiveStatus.ACTIVE) // your enum PartStatus
+                    .HasConversion(s => s.ToString(), dbStatus => (ActiveStatus)Enum.Parse(typeof(ActiveStatus), dbStatus));
             builder.HasIndex(p => p.Name).HasDatabaseName("ix_part_name");
 
             builder.HasOne(p => p.Category).WithMany(c => c.Parts).HasForeignKey(p => p.CateId).OnDelete(DeleteBehavior.SetNull);
