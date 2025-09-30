@@ -23,17 +23,24 @@ namespace EVWUser.API.Repositories.Impl
                 if (string.IsNullOrWhiteSpace(email))
                     throw new BadRequestException("Email is required");
 
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower()) ?? null;
                 if (user == null)
                     throw new NotFoundException("Email not found");
 
+                if (user.Status == UserStatus.INACTIVE)
+                    throw new BadRequestException("User is inactive");
+
                 return user;
             }
-            catch (BadRequestException ex)
+            catch (BadRequestException)
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception)
             {
                 throw new InternalServerException("Error retrieving user by email");
             }
@@ -65,7 +72,7 @@ namespace EVWUser.API.Repositories.Impl
             }
         }
 
-        public async Task<PaginatedResult<User>> SearchByEmailAsync(string? email, PaginationRequest request)
+        public async Task<PaginatedResult<User>> SearchAsync(Guid? roleId, string? email, PaginationRequest request)
         {
             try
             {
@@ -94,6 +101,59 @@ namespace EVWUser.API.Repositories.Impl
                 throw new InternalServerException("Error searching users by email");
             }
         }
+
+        public async Task<User> CreateUserAsync(User user)
+        {
+            try
+            {
+                var emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == user.Email.ToLower());
+                if (emailExists)
+                    throw new BadRequestException("Email already exists");
+
+                var usernameExists = await _context.Users.AnyAsync(u => u.Username == user.Username);
+                if (usernameExists)
+                    throw new BadRequestException("Username already exists");
+
+                await AddAsync(user);
+
+                return user;
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw new InternalServerException("Error creating user");
+            }
+        }
+
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(user.Username))
+                    throw new BadRequestException("Username is required");
+
+                if (user.UserRoles == null || !user.UserRoles.Any())
+                    throw new BadRequestException("At least one role is required");
+
+                var usernameExists = await _context.Users.AnyAsync(u => u.Username == user.Username && u.UserId != user.UserId);
+                if (usernameExists)
+                    throw new BadRequestException("Username already exists");
+
+                return await UpdateAsync(user.UserId, user);
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                throw new InternalServerException("Error updating user");
+            }
+        }
+
 
         public async Task SoftDeleteAsync(Guid id)
         {

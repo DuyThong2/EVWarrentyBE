@@ -33,7 +33,7 @@ namespace EVWUser.API.Controllers
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetPaged([FromQuery] string? email, [FromQuery] int index, [FromQuery] int pageSize)
+        public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index, [FromQuery] int pageSize)
         {
             var users = await _userService.GetPagedAsync(new PaginationRequest(index, pageSize));
             return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users retrieved successfully"));
@@ -44,7 +44,7 @@ namespace EVWUser.API.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status201Created)]
-        public async Task<ActionResult> Create(UserRequest request)
+        public async Task<ActionResult> Create(UserCreateRequest request)
         {
             var created = await _userService.AddAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = created.UserId },
@@ -56,7 +56,7 @@ namespace EVWUser.API.Controllers
         /// </summary>
         [HttpPut("{id:guid}")]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> Update(Guid id, UserRequest request)
+        public async Task<ActionResult> Update(Guid id, UserUpdateRequest request)
         {
             var updated = await _userService.UpdateAsync(id, request);
             return Ok(ApiResponse<UserDto>.Ok(updated, "User updated successfully"));
