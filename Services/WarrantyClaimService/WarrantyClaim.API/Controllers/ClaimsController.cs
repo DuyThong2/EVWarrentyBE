@@ -2,9 +2,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WarrantyClaim.Application.CQRS.Commands.CreateClaim;
+using WarrantyClaim.Application.CQRS.Commands.DeleteClaim;
+using WarrantyClaim.Application.CQRS.Commands.UpdateClaim;
 using WarrantyClaim.Application.CQRS.Queries.GetClaimByFilter;
 using WarrantyClaim.Application.CQRS.Queries.GetClaimsByPeriod;
 using WarrantyClaim.Application.CQRS.Queries.GetClaimsPage;
+using WarrantyClaim.Application.Dtos;
 using WarrantyClaim.Application.WarrantyClaim.Queries.GetClaimById;
 
 namespace WarrantyClaim.API.Controllers
@@ -100,7 +104,60 @@ namespace WarrantyClaim.API.Controllers
 
             return Ok(result.Result);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(
+                            [FromBody] CreateClaimDto claim,
+                            CancellationToken cancellationToken = default)
+        {
+            if (claim is null) return BadRequest("Body is required.");
+
+            var result = await _sender.Send(new CreateClaimsCommand(claim), cancellationToken);
+
+            // trả về 201 + location tới GET by id
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = result.ClaimId },
+                new { id = result.ClaimId }
+            );
+        }
+
+        // PUT: /api/claims/{id}?replaceAllItems=false
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(
+            Guid id,
+            [FromBody] ClaimDto claim,
+            [FromQuery] bool replaceAllItems = false,
+            CancellationToken cancellationToken = default)
+        {
+           
+
+            var result = await _sender.Send(
+                new UpdateClaimCommand(claim, replaceAllItems),
+                cancellationToken
+            );
+
+            return Ok(result); // { isUpdated = true }
+        }
+
+        // DELETE: /api/claims/{id}
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
+        {
+
+            try
+            {
+                var result = await _sender.Send(new DeleteClaimCommand(id), cancellationToken);
+                return Ok(result); // { isDeleted = true }
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
+
+
 }
 
 

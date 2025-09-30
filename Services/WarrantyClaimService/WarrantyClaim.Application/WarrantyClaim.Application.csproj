@@ -17,8 +17,4 @@
 	  <ProjectReference Include="..\WarrantyClaim.Domain\WarrantyClaim.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="CQRS\Commands\CreateSupplyPart\" />
-	</ItemGroup>
-
 </Project>

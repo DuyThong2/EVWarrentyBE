@@ -5,5 +5,9 @@ global using Microsoft.EntityFrameworkCore;
 global using WarrantyClaim.Domain.Models;
 global using WarrantyClaim.Application.Dtos;
 global using AutoMapper;
+global using WarrantyClaim.Application.Data;
+global using WarrantyClaim.Domain.Enums;
+
+
 
 

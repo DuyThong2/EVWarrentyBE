@@ -24,6 +24,7 @@ namespace WarrantyClaim.Application.CQRS.Queries.GetClaimItemById
         {
             var claimItem = await _db.ClaimItems
                 .AsNoTracking()
+                .Include(i => i.PartSupplies)
                 .Include(i => i.WorkOrders)
                     .ThenInclude(w => w.Technician)
                 .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken);
