@@ -27,7 +27,4 @@
 	  <ProjectReference Include="..\Vehicle.Application\Vehicle.Application.csproj" />
 	  <ProjectReference Include="..\Vehicle.Infrastructure\Vehicle.Infrastructure.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
 </Project>

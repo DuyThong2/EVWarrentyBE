@@ -12,7 +12,7 @@ namespace Vehicle.Infrastructure
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("Database");
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
 
             // Nếu sau này bạn có interceptor (Audit, DomainEvents) thì mở ra
             // services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
@@ -21,7 +21,7 @@ namespace Vehicle.Infrastructure
             services.AddDbContext<ApplicationDbContext>((sp, options) =>
             {
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(connectionString); 
             });
 
             // Map interface IApplicationDbContext -> ApplicationDbContext
