@@ -27,11 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Auth\Logout\" />
-    <Folder Include="Auth\ExtractToken\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj" />
   </ItemGroup>
 

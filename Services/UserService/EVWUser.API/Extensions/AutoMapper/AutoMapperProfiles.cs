@@ -14,7 +14,10 @@ namespace EVWUser.API.Extensions.AutoMapper
                 .ForMember(dest => dest.Roles,
                            opt => opt.Ignore());
 
-            CreateMap<UserRequest, User>();
+            CreateMap<UserCreateRequest, User>();
+
+            CreateMap<UserUpdateRequest, User>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }

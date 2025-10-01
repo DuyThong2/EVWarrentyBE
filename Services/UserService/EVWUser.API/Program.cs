@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,14 +24,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 
-// MediatR
-builder.Services.AddMediatR(config =>
-{
-    config.RegisterServicesFromAssembly(typeof(Program).Assembly);
-    config.AddOpenBehavior(typeof(ValidationBehavior<,>));
-    config.AddOpenBehavior(typeof(LoggingBehavior<,>));
-});
-
 // AutoMapper
 builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfiles).Assembly);
 
@@ -37,7 +31,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
-//builder.Services.AddScoped<IGenericRepository, GenericRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configuration
 builder.Configuration
@@ -66,8 +60,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //Cross-Cutting Services
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddProblemDetails();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -97,14 +96,13 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-builder.Services.AddProblemDetails();
+
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
 
-app.MapGet("/", () => "Hello World!");
+//app.MapGet("/", () => "Hello World!");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -137,9 +135,8 @@ app.UseSwagger(c =>
 
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "EVW User API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
 });
-//app.UseMiddleware<Application.ExceptionHandler();
 
 app.MapControllers();
 
