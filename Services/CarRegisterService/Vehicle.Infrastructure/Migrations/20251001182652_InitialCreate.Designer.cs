@@ -9,10 +9,10 @@ using Vehicle.Infrastructure.Data;
 
 #nullable disable
 
-namespace Vehicle.Infrastructure.Data.Migrations
+namespace Vehicle.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250929204011_InitialCreate")]
+    [Migration("20251001182652_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

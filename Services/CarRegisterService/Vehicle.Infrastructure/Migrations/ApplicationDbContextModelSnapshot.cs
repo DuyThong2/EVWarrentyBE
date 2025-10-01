@@ -8,7 +8,7 @@ using Vehicle.Infrastructure.Data;
 
 #nullable disable
 
-namespace Vehicle.Infrastructure.Data.Migrations
+namespace Vehicle.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

@@ -3,6 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Vehicle.Application.Data;
 using Vehicle.Infrastructure.Data;
+using Vehicle.Application.Repositories;
+using Vehicle.Infrastructure.Repositories;
 
 namespace Vehicle.Infrastructure
 {
@@ -26,6 +28,10 @@ namespace Vehicle.Infrastructure
 
             // Map interface IApplicationDbContext -> ApplicationDbContext
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+
+            // Repositories
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
+            services.AddScoped<IVehiclePartRepository, VehiclePartRepository>();
 
             return services;
         }

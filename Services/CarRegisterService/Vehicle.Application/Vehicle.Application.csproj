@@ -16,17 +16,4 @@
     <ProjectReference Include="..\Vehicle.Domain\Vehicle.Domain.csproj" />
   </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="CQRS\VehicleParts\Commands\CreateVehiclePart\" />
-	  <Folder Include="CQRS\VehicleParts\Commands\DeleteVehiclePart\" />
-	  <Folder Include="CQRS\VehicleParts\Commands\UpdateVehiclePart\" />
-	  <Folder Include="CQRS\VehicleParts\Queries\GetVehiclePartById\" />
-	  <Folder Include="CQRS\VehicleParts\Queries\GetVehiclePartsByVehicleId\" />
-	  <Folder Include="CQRS\Vehicles\Commands\CreateVehicle\" />
-	  <Folder Include="CQRS\Vehicles\Commands\DeleteVehicle\" />
-	  <Folder Include="CQRS\Vehicles\Commands\UpdateVehicle\" />
-	  <Folder Include="CQRS\Vehicles\Queries\GetVehicleById\" />
-	  <Folder Include="CQRS\Vehicles\Queries\GetVehiclesPage\" />
-	</ItemGroup>
-
 </Project>
