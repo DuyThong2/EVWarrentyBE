@@ -72,15 +72,38 @@ namespace EVWUser.API.Repositories.Impl
             }
         }
 
+        //public async Task<List<User>> GetUsersByRoleId(Guid roleId, PaginationRequest request)
+        //{
+        //    try
+        //    {
+        //        var users = await _context.Users
+        //            .Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId))
+        //            .Skip(request.PageIndex * request.PageSize)
+        //            .Take(request.PageSize)
+        //            .ToListAsync();
+        //        return users;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new InternalServerException("Error retrieving users by role id");
+        //    }
+        //}
+
         public async Task<PaginatedResult<User>> SearchAsync(Guid? roleId, string? email, PaginationRequest request)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(email))
-                    return await GetPagedAsync(request);
+                var query = _context.Users.AsQueryable();
 
-                var query = _context.Users
-                    .Where(u => u.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    query = query.Where(u => u.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (roleId.HasValue && roleId != Guid.Empty)
+                {
+                    query = query.Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId));
+                }
 
                 var totalCount = await query.LongCountAsync();
 
@@ -98,9 +121,10 @@ namespace EVWUser.API.Repositories.Impl
             }
             catch (Exception ex)
             {
-                throw new InternalServerException("Error searching users by email");
+                throw new InternalServerException("Error searching users", ex.Message);
             }
         }
+
 
         public async Task<User> CreateUserAsync(User user)
         {
