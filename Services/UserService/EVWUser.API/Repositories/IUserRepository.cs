@@ -7,7 +7,9 @@ namespace EVWUser.API.Repositories
     {
         Task<User?> GetByEmailAsync(string email);
         Task<PaginatedResult<User>> GetPagedAsync(PaginationRequest request);
-        Task<PaginatedResult<User>> SearchByEmailAsync(string? email, PaginationRequest request);
+        Task<PaginatedResult<User>> SearchAsync(Guid? roleId, string? email, PaginationRequest request);
+        Task<User> CreateUserAsync(User user);
+        Task<User> UpdateUserAsync(User user);
         Task SoftDeleteAsync(Guid id);
     }
 }

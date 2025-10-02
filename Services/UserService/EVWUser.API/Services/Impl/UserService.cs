@@ -28,14 +28,12 @@ namespace EVWUser.API.Services.Impl
         public async Task<UserDto> GetByIdAsync(Guid id)
         {
             var user = await _userRepository.GetByIdAsync(id);
-            //var userRoles = await _userRoleRepository.GetByUserIdAsync(id);
             return  await MapRolesToDto(user);
         }
-
-        public async Task<UserDto?> GetByEmailAsync(string email)
+        
+        public async Task<User?> GetByEmailAsync(string email)
         {
-            var user = await _userRepository.GetByEmailAsync(email);
-            return user == null ? null : await MapRolesToDto(user);
+            return await _userRepository.GetByEmailAsync(email);
         }
 
         public async Task<PaginatedResult<UserDto>> GetPagedAsync(PaginationRequest request)
@@ -58,9 +56,9 @@ namespace EVWUser.API.Services.Impl
             );
         }
 
-        public async Task<PaginatedResult<UserDto>> SearchByEmailAsync(string email, PaginationRequest request)
+        public async Task<PaginatedResult<UserDto>> SearchAsync(Guid? roleId, string? email, PaginationRequest request)
         {
-            var pagedUsers = await _userRepository.SearchByEmailAsync(email, request);
+            var pagedUsers = await _userRepository.SearchAsync(roleId, email, request);
 
             var mapped = new List<UserDto>();
 
@@ -78,8 +76,7 @@ namespace EVWUser.API.Services.Impl
             );
         }
 
-
-        public async Task<UserDto> AddAsync(UserRequest request)
+        public async Task<UserDto> AddAsync(UserCreateRequest request)
         {
             if (string.IsNullOrWhiteSpace(request.Email))
                 throw new BadRequestException("Email is required");
@@ -98,24 +95,26 @@ namespace EVWUser.API.Services.Impl
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, request.Password);
             user.Status = UserStatus.ACTIVE;
 
-            var created = await _userRepository.AddAsync(user);
+            var created = await _userRepository.CreateUserAsync(user);
 
             await AssignRolesToUserAsync(created, request.Roles);
 
             return await MapRolesToDto(created);
         }
 
-
-        public async Task<UserDto> UpdateAsync(Guid id, UserRequest request)
+        public async Task<UserDto> UpdateAsync(Guid id, UserUpdateRequest request)
         {
             var existingUser = await _userRepository.GetByIdAsync(id);
             existingUser = _mapper.Map(request, existingUser);
             var existingRoleIds = await _userRoleRepository.GetRoleIdsByUserIdAsync(id);
 
-            await RemoveRolesFromUserAsync(id, existingRoleIds);
-            await AssignRolesToUserAsync(existingUser, request.Roles);
+            if (request.Roles != null && request.Roles.Any())
+            {
+                await RemoveRolesFromUserAsync(id, existingRoleIds);
+                await AssignRolesToUserAsync(existingUser, request.Roles);
+            }
 
-            var updated = await _userRepository.UpdateAsync(id, existingUser);
+            var updated = await _userRepository.UpdateUserAsync(existingUser);
             return await MapRolesToDto(updated);
         }
 
@@ -124,7 +123,7 @@ namespace EVWUser.API.Services.Impl
             await _userRepository.SoftDeleteAsync(id);
         }
 
-        private async Task<UserDto> MapRolesToDto(User user)
+        public async Task<UserDto> MapRolesToDto(User user)
         {
             var userDto = _mapper.Map<UserDto>(user);
 
