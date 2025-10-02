@@ -30,9 +30,9 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
             RuleFor(x => x.SupplyPart.ShipmentCode).MaximumLength(128);
             RuleFor(x => x.SupplyPart.ShipmentRef).MaximumLength(128);
 
-            RuleFor(x => x.SupplyPart.Status)
-                .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<SupplyStatus>(s, true, out _))
-                .WithMessage("Status is invalid");
+            //RuleFor(x => x.SupplyPart.Status)
+            //    .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<SupplyStatus>(s, true, out _))
+            //    .WithMessage("Status is invalid");
         }
     }
 

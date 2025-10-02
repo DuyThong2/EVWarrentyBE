@@ -114,7 +114,6 @@ namespace WarrantyClaim.API.Controllers
 
             var result = await _sender.Send(new CreateClaimsCommand(claim), cancellationToken);
 
-            // trả về 201 + location tới GET by id
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = result.ClaimId },
@@ -131,7 +130,7 @@ namespace WarrantyClaim.API.Controllers
             CancellationToken cancellationToken = default)
         {
            
-
+            claim.Id = id;
             var result = await _sender.Send(
                 new UpdateClaimCommand(claim, replaceAllItems),
                 cancellationToken

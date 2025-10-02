@@ -81,8 +81,8 @@ namespace WarrantyClaim.API.Controllers
             [FromBody] TechnicianDto technician,
             CancellationToken cancellationToken = default)
         {
-            
 
+            technician.Id = id;
             var result = await _sender.Send(new UpdateTechnicianCommand(technician), cancellationToken);
             return Ok(result); // { isUpdated = true }
         }

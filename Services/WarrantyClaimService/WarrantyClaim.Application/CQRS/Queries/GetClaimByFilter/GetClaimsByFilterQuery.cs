@@ -19,11 +19,11 @@ namespace WarrantyClaim.Application.CQRS.Queries.GetClaimByFilter
     public class ClaimsFilter
     {
         public Guid? Id { get; set; }
-        public Guid? StaffId { get; set; }
+        //public Guid? StaffId { get; set; }
         public string? VIN { get; set; }
         public string? Status { get; set; }      
         public string? ClaimType { get; set; }   
-        public Guid? ClaimItemId { get; set; }
+        //public Guid? ClaimItemId { get; set; }
         public DateTime? Start { get; set; }     
         public DateTime? End { get; set; }
     }

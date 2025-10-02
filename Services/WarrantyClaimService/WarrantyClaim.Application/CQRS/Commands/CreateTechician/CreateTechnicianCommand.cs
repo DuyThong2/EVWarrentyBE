@@ -32,7 +32,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateTechician
 
             // Status là string → phải parse được sang enum (ví dụ TechnicianStatus)
             RuleFor(x => x.Technician.Status)
-                .Must(s => string.IsNullOrWhiteSpace(s))
+                .Must(s => !string.IsNullOrWhiteSpace(s))
                 .WithMessage("Invalid Technician status value");
         }
     }

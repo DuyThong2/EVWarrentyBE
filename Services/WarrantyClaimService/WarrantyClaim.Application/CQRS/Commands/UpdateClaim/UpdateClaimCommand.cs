@@ -27,6 +27,9 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaim
                 .NotEmpty().WithMessage("VIN is required")
                 .MaximumLength(64);
 
+            RuleFor(x => x.Claim.TotalPrice)
+                .GreaterThanOrEqualTo(0).When(x => x.Claim.TotalPrice.HasValue);
+
             // Validate Items nếu có
             When(x => x.Claim.Items != null, () =>
             {

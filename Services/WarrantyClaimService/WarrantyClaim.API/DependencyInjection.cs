@@ -30,14 +30,15 @@ public static class DependencyInjection
         app.UseRouting();
 
 
+
         app.UseExceptionHandler(options => { });
 
-        
 
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
         });
+
 
         return app;
     }

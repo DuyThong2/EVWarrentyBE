@@ -26,11 +26,13 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateWorkOrder
                 .NotEmpty().WithMessage("TechnicianId is required");
 
             RuleFor(x => x.WorkOrder.WorkingHours)
-                .GreaterThanOrEqualTo(0).When(x => x.WorkOrder.WorkingHours.HasValue);
+                .GreaterThanOrEqualTo(0).When(x => x.WorkOrder.WorkingHours.HasValue).WithMessage("hours must be greater than 0"); 
 
             // Status là string -> cho phép null/rỗng; nếu có phải parse được sang enum
             RuleFor(x => x.WorkOrder.Status)
-                .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<WorkOrderStatus>(s, true, out _))
+                .Must(s => !string.IsNullOrWhiteSpace(s) 
+                //|| Enum.TryParse<WorkOrderStatus>(s, true, out _)
+                )
                 .WithMessage("Invalid WorkOrder status");
 
             // Nếu cả StartedAt và EndDate có giá trị thì EndDate >= StartedAt

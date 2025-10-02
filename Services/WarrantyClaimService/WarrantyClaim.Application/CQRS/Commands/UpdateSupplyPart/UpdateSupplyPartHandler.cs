@@ -37,7 +37,6 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
             partSupply.ShipmentCode = dto.ShipmentCode;
             partSupply.ShipmentRef = dto.ShipmentRef;
 
-            partSupply.Status = SupplyStatus.REQUESTED;
             if (!string.IsNullOrWhiteSpace(dto.Status) &&
                 Enum.TryParse<SupplyStatus>(dto.Status, true, out var parsed))
             {

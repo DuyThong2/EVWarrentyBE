@@ -37,9 +37,9 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaimItem
             RuleFor(x => x.Item.ImgURLs)
                 .MaximumLength(4000);
 
-            RuleFor(x => x.Item.Status)
-                .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<ClaimItemStatus>(s, true, out _))
-                .WithMessage("Invalid ClaimItem status value");
+            //RuleFor(x => x.Item.Status)
+            //    .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<ClaimItemStatus>(s, true, out _))
+            //    .WithMessage("Invalid ClaimItem status value");
         }
     }
 }

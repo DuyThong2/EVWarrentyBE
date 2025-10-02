@@ -2,6 +2,7 @@
 using BuildingBlocks.Pagination;
 using WarrantyClaim.Application.CQRS.Queries.GetClaimByFilter;
 using WarrantyClaim.Application.Data;
+using WarrantyClaim.Application.Extension;
 
 
 namespace WarrantyClaim.Application.CQRS.Queries.GetClaimByFilter;
@@ -10,6 +11,7 @@ internal class GetClaimsFilteredHandler
 {
     private readonly IApplicationDbContext _db;
     private readonly IMapper _mapper;
+
 
     public GetClaimsFilteredHandler(IApplicationDbContext db, IMapper mapper)
     {
@@ -44,15 +46,16 @@ internal class GetClaimsFilteredHandler
     private IQueryable<Claim> ApplyFilters(IQueryable<Claim> query, ClaimsFilter f)
     {
         if (f.Id is Guid id) query = query.Where(c => c.Id == id);
-        if (f.StaffId is Guid staffId) query = query.Where(c => c.StaffId == staffId);
+        //if (f.StaffId is Guid staffId) query = query.Where(c => c.StaffId == staffId);
         if (!string.IsNullOrWhiteSpace(f.VIN))
             query = query.Where(c => c.VIN.Contains(f.VIN));
-        if (!string.IsNullOrWhiteSpace(f.Status))
-            query = query.Where(c => c.Status.ToString() == f.Status);
-        if (!string.IsNullOrWhiteSpace(f.ClaimType))
-            query = query.Where(c => c.ClaimType.ToString() == f.ClaimType);
-        if (f.ClaimItemId is Guid claimItemId)
-            query = query.Where(c => c.Items.Any(i => i.Id == claimItemId));
+        if (EnumParser.TryParseEnum<ClaimStatus>(f.Status, out var parsedStatus))
+            query = query.Where(c => c.Status == parsedStatus);
+
+        if (EnumParser.TryParseEnum<ClaimType>(f.ClaimType, out var parsedType))
+            query = query.Where(c => c.ClaimType == parsedType);
+        //if (f.ClaimItemId is Guid claimItemId)
+        //    query = query.Where(c => c.Items.Any(i => i.Id == claimItemId));
         if (f.Start.HasValue && f.End.HasValue)
         {
             var start = f.Start.Value;

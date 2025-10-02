@@ -29,12 +29,12 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateWorkOrder
                 .NotEmpty().WithMessage("TechnicianId is required");
 
             RuleFor(x => x.WorkOrder.WorkingHours)
-                .GreaterThanOrEqualTo(0).When(x => x.WorkOrder.WorkingHours.HasValue);
+                .GreaterThanOrEqualTo(0).When(x => x.WorkOrder.WorkingHours.HasValue).WithMessage("hours must be greater than 0"); 
 
             // Status là string: cho phép null/rỗng; nếu có thì phải parse được
-            RuleFor(x => x.WorkOrder.Status)
-                .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<WorkOrderStatus>(s, true, out _))
-                .WithMessage("Invalid WorkOrder status");
+            //RuleFor(x => x.WorkOrder.Status)
+            //    .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<WorkOrderStatus>(s, true, out _))
+            //    .WithMessage("Invalid WorkOrder status");
 
             // Nếu có cả StartedAt & EndDate thì EndDate >= StartedAt
             When(x => x.WorkOrder.StartedAt.HasValue && x.WorkOrder.EndDate.HasValue, () =>

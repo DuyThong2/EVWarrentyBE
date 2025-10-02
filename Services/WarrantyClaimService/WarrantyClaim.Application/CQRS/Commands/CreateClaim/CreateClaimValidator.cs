@@ -43,7 +43,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateClaim
                 .MaximumLength(128);
 
             RuleFor(x => x.PayAmount)
-                .GreaterThanOrEqualTo(0).When(x => x.PayAmount.HasValue);
+                .GreaterThanOrEqualTo(0).When(x => x.PayAmount.HasValue).WithMessage("amount must greater than 0");
 
             RuleFor(x => x.PaidBy)
                 .MaximumLength(64);
