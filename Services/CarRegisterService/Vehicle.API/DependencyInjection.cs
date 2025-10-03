@@ -21,8 +21,8 @@ namespace Vehicle.API
         {
             app.UseRouting();
 
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
+            //app.UseHttpsRedirection();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
