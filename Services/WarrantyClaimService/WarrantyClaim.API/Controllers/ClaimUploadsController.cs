@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WarrantyClaim.API.Controllers
 {
     [ApiController]
-    [Route("api/uploads")]
+    [Route("api/[controller]")]
     public sealed class ClaimUploadsController : ControllerBase
     {
         private readonly IS3Storage _storage;
