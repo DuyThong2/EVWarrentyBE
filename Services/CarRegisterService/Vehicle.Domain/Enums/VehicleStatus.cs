@@ -6,6 +6,6 @@
         Sold,
         Stolen,
         Scrapped,
-        Deactive
+        Deleted
     }
 }

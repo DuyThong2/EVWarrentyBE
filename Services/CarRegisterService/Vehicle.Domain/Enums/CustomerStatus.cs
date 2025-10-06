@@ -6,6 +6,7 @@ namespace Vehicle.Domain.Enums
     {
         Active,
         Inactive,
-        Suspended
+        Suspended,
+        Deleted
     }
 }

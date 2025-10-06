@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 
 namespace Vehicle.Application.Dtos
 {
-    public class CreateVehicleDto
+    public class UpdateVehicleDto
     {
         public Guid CustomerId { get; set; }
 
@@ -19,3 +19,5 @@ namespace Vehicle.Application.Dtos
         public string? Status { get; set; }
     }
 }
+
+

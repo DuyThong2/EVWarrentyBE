@@ -25,12 +25,12 @@ namespace Vehicle.Application.Extension
             CreateMap<CreateVehicleDto, Vehicle.Domain.Models.Vehicle>()
                 .ForMember(d => d.Status, opt => opt.MapFrom(s =>
                     ParseEnumOrDefault(s.Status, VehicleStatus.Active)))
-                .ForMember(d => d.Parts, opt => opt.MapFrom(s => s.Parts ?? new List<CreateVehiclePartDto>()))
                 .ForMember(d => d.Customer, opt => opt.Ignore());
 
             CreateMap<Vehicle.Domain.Models.Vehicle, VehicleDto>()
                 .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
-                .ForMember(d => d.Parts, opt => opt.MapFrom(s => s.Parts));
+                .ForMember(d => d.Parts, opt => opt.MapFrom(s => s.Parts))
+                .ForMember(d => d.Customer, opt => opt.MapFrom(s => s.Customer));
 
             // ===== Customer =====
             CreateMap<CreateCustomerDto, Customer>()
@@ -41,6 +41,9 @@ namespace Vehicle.Application.Extension
             CreateMap<Customer, CustomerDto>()
                 .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
                 .ForMember(d => d.Vehicles, opt => opt.MapFrom(s => s.Vehicles));
+
+            CreateMap<Customer, CustomerBriefDto>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
 
             // ===== UpdateCustomerDto =====
             CreateMap<UpdateCustomerDto, Customer>()
@@ -56,6 +59,20 @@ namespace Vehicle.Application.Extension
             // ===== Reverse Maps =====
             CreateMap<VehiclePartDto, VehiclePart>();
             CreateMap<VehicleDto, Vehicle.Domain.Models.Vehicle>();
+            CreateMap<UpdateVehicleDto, Vehicle.Domain.Models.Vehicle>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                    ParseEnumOrDefault(s.Status, VehicleStatus.Active)))
+                .ForMember(d => d.Customer, opt => opt.Ignore());
+
+            // ===== VehicleImage =====
+            CreateMap<CreateVehicleImageDto, VehicleImage>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                    ParseEnumOrDefault(s.Status, VehicleImageStatus.Active)));
+            CreateMap<VehicleImage, VehicleImageDto>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
+            CreateMap<VehicleImageDto, VehicleImage>()
+                .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                    ParseEnumOrDefault(s.Status, VehicleImageStatus.Active)));
             CreateMap<CustomerDto, Customer>();
         }
 
