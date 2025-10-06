@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.CQRS;
+using PartCatalog.Application.DTOs;
 
 namespace PartCatalog.Application.CQRS.Queries.GetWarrantyPolicyById
 {
-    internal class GetWarrantyPolicyByIdQuery
-    {
-    }
+    public record GetWarrantyPolicyByIdQuery(Guid PolicyId)
+        : IQuery<GetWarrantyPolicyByIdResult>;
+
+    public record GetWarrantyPolicyByIdResult(WarrantyPolicyDto Policy);
 }

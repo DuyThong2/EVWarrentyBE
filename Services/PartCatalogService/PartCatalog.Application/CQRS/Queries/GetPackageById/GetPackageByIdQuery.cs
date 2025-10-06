@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.CQRS;
+using PartCatalog.Domain.Models;
 
 namespace PartCatalog.Application.CQRS.Queries.GetPackageById
 {
-    internal class GetPackageByIdQuery
-    {
-    }
+    public record GetPackageByIdQuery(Guid PackageId) : IQuery<GetPackageByIdResult>;
+
+    public record GetPackageByIdResult(Package Package);
 }
