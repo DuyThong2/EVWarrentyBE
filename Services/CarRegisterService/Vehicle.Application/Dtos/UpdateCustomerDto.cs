@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
 
 namespace Vehicle.Application.Dtos
 {
-    public class CustomerDto
+    public class UpdateCustomerDto
     {
         public Guid CustomerId { get; set; }
 
@@ -15,8 +14,6 @@ namespace Vehicle.Application.Dtos
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public List<CustomerVehicleDto> Vehicles { get; set; } = new();
+        // Không bao gồm Vehicles để tránh circular reference và confusion
     }
 }
-
-

@@ -99,7 +99,7 @@ namespace Vehicle.API.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,
-            [FromBody] CustomerDto customer,
+            [FromBody] UpdateCustomerDto customer,
             CancellationToken cancellationToken = default)
         {
             if (id == Guid.Empty || customer == null)

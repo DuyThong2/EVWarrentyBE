@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Vehicle.Application.Dtos
 {
-    public class VehicleDto
+    public class CustomerVehicleDto
     {
         public Guid VehicleId { get; set; }
         public Guid CustomerId { get; set; }
@@ -22,10 +22,6 @@ namespace Vehicle.Application.Dtos
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        // Loại bỏ CustomerDto để tránh circular reference
-        // public CustomerDto? Customer { get; set; }
         public List<VehiclePartDto> Parts { get; set; } = new();
     }
 }
-
-

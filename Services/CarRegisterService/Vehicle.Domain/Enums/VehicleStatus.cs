@@ -5,6 +5,7 @@
         Active,
         Sold,
         Stolen,
-        Scrapped
+        Scrapped,
+        Deactive
     }
 }

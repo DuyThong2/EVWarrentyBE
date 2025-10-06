@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BuildingBlocks.Pagination;
 using Microsoft.AspNetCore.Mvc;
@@ -107,10 +107,11 @@ namespace Vehicle.API.Controllers
             var existing = await _repository.GetByIdAsync(id, cancellationToken);
             if (existing is null)
                 return NotFound();
-
+            var createdAt = existing.CreatedAt; // lưu lại trước khi map
             _mapper.Map(payload, existing);
             existing.VehicleId = id;
             existing.UpdatedAt = DateTime.UtcNow;
+            existing.CreatedAt = createdAt; // khôi phục lại giá trị gốc
 
             await _repository.UpdateAsync(existing, cancellationToken);
             return Ok(new { isUpdated = true });
