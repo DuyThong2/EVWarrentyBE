@@ -25,13 +25,26 @@ public class CustomMapper : Profile
         .ForMember(d => d.Category, opt => opt.Ignore())
         .ForMember(d => d.Package, opt => opt.Ignore());
 
-
-        // ===== Category =====
-        //CreateMap<Category, CategoryDto>().ReverseMap();
+        CreateMap<CreatePartDto, Part>()
+            .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                s.Status == null
+                    ? ActiveStatus.ACTIVE   // fallback mặc định
+                    : ParseEnumOrDefault(s.Status, ActiveStatus.ACTIVE)))
+            .ForMember(d => d.Category, opt => opt.Ignore())
+            .ForMember(d => d.Package, opt => opt.Ignore());
 
         // ===== Package =====
+        CreateMap<Package, PackageDto>()
+            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
+            .ForMember(d => d.PartId, opt => opt.Ignore())
+            .ForMember(d => d.PartName, opt => opt.Ignore());
+
+
         //CreateMap<Package, PackageDto>().ReverseMap();
 
+
+        // ===== Category ====
+        //CreateMap<Category, CategoryDto>().ReverseMap();
         // ===== WarrantyPolicy =====
         //CreateMap<WarrantyPolicy, WarrantyPolicyDto>().ReverseMap();
     }

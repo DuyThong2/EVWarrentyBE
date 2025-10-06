@@ -23,3 +23,4 @@ namespace PartCatalog.Domain.Models
         public Package? Package { get; set; }
     }
 }
+//Policy Gán vô Package (một Package có thể có nhiều chính sách bảo hành)

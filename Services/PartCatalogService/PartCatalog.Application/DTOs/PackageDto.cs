@@ -18,8 +18,8 @@ namespace PartCatalog.Application.DTOs
         public string? Note { get; set; }
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public Guid? CategoryId { get; set; }
-        public string? CategoryName { get; set; }
+        public Guid? PartId { get; set; }
+        public string? PartName { get; set; }
     }
 
     public class CreatePackageDto
@@ -31,7 +31,7 @@ namespace PartCatalog.Application.DTOs
         public PartCatalog.Domain.Enums.ActiveStatus? Status { get; set; }
         public decimal Quantity { get; set; } = 1;
         public string? Note { get; set; }
-        public Guid? CategoryId { get; set; }
+        public Guid? PartId { get; set; }
     }
 
     public class UpdatePackageDto
@@ -44,6 +44,6 @@ namespace PartCatalog.Application.DTOs
         public PartCatalog.Domain.Enums.ActiveStatus? Status { get; set; }
         public decimal Quantity { get; set; }
         public string? Note { get; set; }
-        public Guid? CategoryId { get; set; }
+        public Guid? PartId { get; set; }
     }
 }

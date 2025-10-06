@@ -18,7 +18,7 @@ namespace PartCatalog.Application.Features.Packages.Handlers
         {
             var dto = request.Package;
 
-            // Check trùng mã code
+            // Validate unique PackageCode
             if (_context.Packages.Any(p => p.PackageCode == dto.PackageCode))
             {
                 return new CreatePackageResult(Guid.Empty, false, "PackageCode already exists.");
