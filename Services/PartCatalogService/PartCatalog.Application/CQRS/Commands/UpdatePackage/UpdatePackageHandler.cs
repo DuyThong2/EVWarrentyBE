@@ -34,8 +34,18 @@ namespace PartCatalog.Application.Features.Packages.Handlers
             entity.Status = dto.Status;
             entity.Quantity = dto.Quantity;
             entity.Note = dto.Note;
-            entity.CategoryId = dto.CategoryId;
             entity.UpdatedAt = DateTime.UtcNow;
+            entity.CategoryId = dto.CategoryId;
+            if (dto.PartId != null)
+            {
+
+                var newParts = await _context.Parts
+                    .Where(p => dto.PartId.Contains(p.PartId))
+                    .ToListAsync(cancellationToken);
+
+                entity.Parts?.Clear();
+                entity.Parts = newParts;
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 
