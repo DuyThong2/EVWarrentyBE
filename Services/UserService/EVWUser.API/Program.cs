@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Behaviors;
+using BuildingBlocks.Email;
 using BuildingBlocks.Exceptions.Handler;
 using EVWUser.API.Data;
 using EVWUser.API.Data.Extensions;
@@ -32,6 +33,12 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddEmailSender(
+    host: "smtp.gmail.com",
+    port: 587,
+    username: "trankimnha272727@gmail.com",
+    password: "bjzi qbqv cokr utsv");
 
 // Configuration
 builder.Configuration
@@ -83,16 +90,16 @@ builder.Services.AddSwaggerGen(c =>{
 });
 
 // CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy", policyBuilder =>
-    {
-        policyBuilder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("CorsPolicy", policyBuilder =>
+//    {
+//        policyBuilder
+//            .AllowAnyOrigin()
+//            .AllowAnyMethod()
+//            .AllowAnyHeader();
+//    });
+//});
 
 builder.Services.AddAuthorization();
 
@@ -111,7 +118,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Order of middlewares is important
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseRouting();
 //app.UseExceptionHandler();
