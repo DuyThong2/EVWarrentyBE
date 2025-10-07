@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PartCatalog.Application.DTOs
 {
     public class CategoryDto
     {
+        public Guid CateId { get; set; }
+        public string CateCode { get; set; } = null!;
+        public string CateName { get; set; } = null!;
+        public string? Description { get; set; }
+        public decimal? Quantity { get; set; }
     }
 }

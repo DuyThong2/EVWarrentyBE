@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.CQRS;
+using FluentValidation;
 
 namespace PartCatalog.Application.CQRS.Commands.DeleteCategory
 {
-    internal class DeleteCategoryCommand
+    public record DeleteCategoryCommand(Guid CateId)
+        : ICommand<DeleteCategoryResult>;
+
+    public record DeleteCategoryResult(bool IsSuccess, string Message);
+
+    public class DeleteCategoryCommandValidator : AbstractValidator<DeleteCategoryCommand>
     {
+        public DeleteCategoryCommandValidator()
+        {
+            RuleFor(x => x.CateId)
+                .NotEmpty().WithMessage("Category ID is required.");
+        }
     }
 }

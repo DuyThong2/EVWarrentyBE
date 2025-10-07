@@ -52,7 +52,9 @@ public class CustomMapper : Profile
 
 
         // ===== Category ====
-        //CreateMap<Category, CategoryDto>().ReverseMap();
+        CreateMap<Category, CategoryDto>();
+
+        CreateMap<Category, CategoryDto>().ReverseMap();
         // ===== WarrantyPolicy =====
         CreateMap<CreateWarrantyPolicyDto, WarrantyPolicy>()
             .ForMember(d => d.PolicyId, opt => opt.Ignore())

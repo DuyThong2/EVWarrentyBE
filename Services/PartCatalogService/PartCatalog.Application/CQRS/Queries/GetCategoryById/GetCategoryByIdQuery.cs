@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.CQRS;
 
 namespace PartCatalog.Application.CQRS.Queries.GetCategoryById
 {
-    internal class GetCategoryByIdQuery
-    {
-    }
+    public record GetCategoryByIdQuery(Guid CateId)
+        : IQuery<GetCategoryByIdResult>;
 }
