@@ -20,17 +20,30 @@ services:
       context: .
       dockerfile: Services/WarrantyClaimService/WarrantyClaim.API/Dockerfile
 
-  partdb:
+  vehicledb:
     image: mcr.microsoft.com/mssql/server
 
-  
+  vehicleAPI:
+    image: giang/vehicleapi
+    build:
+      context: .
+      dockerfile: Services/CarRegisterService/Vehicle.API/Dockerfile
 
-
-
+  partdb:
+    image: mcr.microsoft.com/mssql/server
 
   partcatalogAPI:
     image: vunt/partcatalogapi
     build:
       context: .
       dockerfile: Services/PartCatalogService/PartCatalog.API/Dockerfile
+
+  userdb:
+    image: mcr.microsoft.com/mssql/server
+
+  userAPI:
+    image: nhatk/userapi
+    build:
+      context: .
+      dockerfile: Services/UserService/EVWUser.API/Dockerfile
 

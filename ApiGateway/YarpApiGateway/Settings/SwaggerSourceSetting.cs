@@ -5,7 +5,11 @@
         public const string SectionName = "SwaggerSources";
         public string WarrantyClaim { get; set; } = string.Empty;
 
+        public string VehicleClaim { get; set; } = string.Empty;
+
+
         public string PartCatalog { get; set; } = string.Empty;
 
+        public string User { get; set; } = string.Empty;
     }
 }

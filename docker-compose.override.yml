@@ -1,7 +1,8 @@
+version: '3.9'
+
 services:
 
-  
-
+  # RabbitMQ broker
   messagebroker:
     container_name: messagebroker
     hostname: evwarranty-mq
@@ -10,25 +11,25 @@ services:
       - RABBITMQ_DEFAULT_PASS=guest
     restart: always
     ports:
-      - "5672:5672"
-      - "15672:15672"
-  
-  
+      - "5672:5672"      
+      - "15672:15672"    
+
+  # API Gateway (YARP)
   yarpapigateway:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     ports:
-      - "8000:8080" 
-      - "8089:8081"
+      - "8387:8080" 
+      - "8386:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
-  
+  # Claim DB (SQL Server)
   claimdb:
     container_name: claimdb
     environment:
@@ -45,17 +46,22 @@ services:
       timeout: 5s
       retries: 3
       start_period: 6s   
-      
+
+  # Claim API
   warrantyclaimAPI:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=claimdb,1433;Database=WarrantyClaimDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
-
+      - AWSOPTIONS__REGION=${AWS__REGION}
+      - AWSOPTIONS__BUCKET=${AWS__BUCKET}
+      - AWSOPTIONS__KEYPREFIX=${AWS__KEYPREFIX}
+      - AWSOPTIONS__ACCESSKEY=${AWS__ACCESSKEY}
+      - AWSOPTIONS__SECRETKEY=${AWS__SECRETKEY}
     ports:
-      - "8003:8080"
-      - "8083:8081"
+      - "8004:8080"
+      - "8084:8081"
     depends_on:
       claimdb:
         condition: service_healthy
@@ -64,7 +70,80 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    
+  userdb:
+    container_name: userdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SwN12345678
+    restart: always
+    ports:
+      - "1438:1433"
+    volumes:
+      - userdb_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/1433' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 4
+      start_period: 6s   
+      
+  userAPI:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=userdb,1433;Database=UserDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+    ports:
+      - "7090:8080"
+      - "7099:8081"
+    depends_on:
+      userdb:
+        condition: service_healthy
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+  # Vehicle DB
+  vehicledb:
+    container_name: vehicledb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SwN12345678
+    restart: always
+    ports:
+      - "1437:1433"
+    volumes:
+      - vehicledb_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/localhost/1433' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 6s  
 
+  # Vehicle API
+  vehicleAPI:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__DefaultConnection=Server=vehicledb,1433;Database=VehicleDB;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+    ports:
+      - "4949:8080"
+      - "4950:8081"
+    depends_on:
+      vehicledb:
+        condition: service_healthy
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+      
+  # Part DB
   partdb:
     container_name: partdb
     environment:
@@ -82,16 +161,16 @@ services:
       retries: 3
       start_period: 6s
 
+  # Part API
   partcatalogAPI:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=partdb,1433;Database=PartCatalogDb;User Id=sa;Password=12345678Aa;Encrypt=False;TrustServerCertificate=True
-
     ports:
-      - "8387:8080"
-      - "8386:8081"
+      - "7071:8080"
+      - "7070:8081"
     depends_on:
       partdb:
         condition: service_healthy
@@ -100,9 +179,11 @@ services:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
 volumes:
   claimdb_data:
+  vehicledb_data:
   partdb_data:
-
+  userdb_data:
 
 
