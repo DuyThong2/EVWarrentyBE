@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BuildingBlocks.Pagination;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Vehicle.Application.Dtos;
+using Vehicle.Domain.Enums;
 using Vehicle.Domain.Enums;
 using Vehicle.Application.Filters;
 using Vehicle.Application.Repositories;
@@ -71,6 +72,24 @@ namespace Vehicle.API.Controllers
             return Ok(result);
         }
 
+        // GET: /api/vehicles/by-customer/{customerId}
+        [HttpGet("by-customer/{customerId:guid}")]
+        public async Task<IActionResult> GetByCustomerId(
+            Guid customerId,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            if (customerId == Guid.Empty)
+                return BadRequest("customerId is required.");
+
+            var filter = new VehicleFilter { CustomerId = customerId };
+            var page = await _repository.FilterAsync(filter, pageIndex, pageSize, cancellationToken);
+            var data = page.Data.Select(e => _mapper.Map<VehicleDto>(e));
+            var result = new PaginatedResult<VehicleDto>(page.PageIndex, page.PageSize, page.Count, data);
+            return Ok(result);
+        }
+
         // POST: /api/vehicles
         [HttpPost]
         public async Task<IActionResult> Create(
@@ -98,7 +117,7 @@ namespace Vehicle.API.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,
-            [FromBody] VehicleDto payload,
+            [FromBody] UpdateVehicleDto payload,
             CancellationToken cancellationToken = default)
         {
             if (id == Guid.Empty || payload is null)
@@ -107,10 +126,11 @@ namespace Vehicle.API.Controllers
             var existing = await _repository.GetByIdAsync(id, cancellationToken);
             if (existing is null)
                 return NotFound();
-
+            var createdAt = existing.CreatedAt; // lưu lại trước khi map
             _mapper.Map(payload, existing);
             existing.VehicleId = id;
             existing.UpdatedAt = DateTime.UtcNow;
+            existing.CreatedAt = createdAt; // khôi phục lại giá trị gốc
 
             await _repository.UpdateAsync(existing, cancellationToken);
             return Ok(new { isUpdated = true });
@@ -127,6 +147,25 @@ namespace Vehicle.API.Controllers
             if (!ok)
                 return NotFound();
             return Ok(new { isDeleted = true });
+        }
+
+        // PATCH: /api/vehicles/{id}/toggle-delete
+        [HttpPatch("{id:guid}/toggle-delete")]
+        public async Task<IActionResult> ToggleDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            if (id == Guid.Empty)
+                return BadRequest();
+
+            var existing = await _repository.GetByIdAsync(id, cancellationToken);
+            if (existing is null)
+                return NotFound();
+
+            var isDeleted = existing.Status == VehicleStatus.Deleted;
+            existing.Status = isDeleted ? VehicleStatus.Active : VehicleStatus.Deleted;
+            existing.UpdatedAt = DateTime.UtcNow;
+
+            await _repository.UpdateAsync(existing, cancellationToken);
+            return Ok(new { status = existing.Status.ToString() });
         }
     }
 }

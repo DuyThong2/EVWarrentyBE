@@ -2,5 +2,5 @@
 
 namespace Vehicle.Application.CQRS.Customers.Commands.UpdateCustomer
 {
-    public record UpdateCustomerCommand(CustomerDto Customer) : ICommand<UpdateCustomerResult>;
+    public record UpdateCustomerCommand(UpdateCustomerDto Customer) : ICommand<UpdateCustomerResult>;
 }

@@ -19,6 +19,7 @@ namespace Vehicle.Infrastructure.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Vehicle.Domain.Models.Vehicle> Vehicles { get; set; }
         public DbSet<VehiclePart> VehicleParts { get; set; }
+        public DbSet<VehicleImage> VehicleImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
