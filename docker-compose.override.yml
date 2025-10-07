@@ -54,6 +54,11 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=claimdb,1433;Database=WarrantyClaimDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - AWSOPTIONS__REGION=${AWS__REGION}
+      - AWSOPTIONS__BUCKET=${AWS__BUCKET}
+      - AWSOPTIONS__KEYPREFIX=${AWS__KEYPREFIX}
+      - AWSOPTIONS__ACCESSKEY=${AWS__ACCESSKEY}
+      - AWSOPTIONS__SECRETKEY=${AWS__SECRETKEY}
     ports:
       - "8004:8080"
       - "8084:8081"

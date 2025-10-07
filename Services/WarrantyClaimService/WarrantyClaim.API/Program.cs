@@ -1,3 +1,5 @@
+using BuildingBlocks.Storage.Settings;
+using Microsoft.Extensions.Options;
 using Ordering.Application;
 using WarrantyClaim.API;
 using WarrantyClaim.Infrastructure;
@@ -10,6 +12,7 @@ builder.Services
     .AddInfrastructureServices(builder.Configuration)
     .AddApiServices(builder.Configuration);
 var app = builder.Build();
+
 
 
 
@@ -28,5 +31,14 @@ if (app.Environment.IsDevelopment())
     await app.InitialiseDatabaseAsync();
 }
 
-
+//using (var scope = app.Services.CreateScope())
+//{
+//    var opts = scope.ServiceProvider.GetRequiredService<IOptions<AwsOptions>>().Value;
+//    Console.WriteLine($"[DEBUG] AwsOptions loaded:");
+//    Console.WriteLine($"Region   = {opts.Region}");
+//    Console.WriteLine($"Bucket   = {opts.Bucket}");
+//    Console.WriteLine($"KeyPrefix= {opts.KeyPrefix}");
+//    Console.WriteLine($"AccessKey= {(string.IsNullOrEmpty(opts.AccessKey) ? "<null>" : "****")}");
+//    Console.WriteLine($"SecretKey= {(string.IsNullOrEmpty(opts.SecretKey) ? "<null>" : "****")}");
+//}
 app.Run();

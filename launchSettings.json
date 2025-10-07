@@ -6,11 +6,8 @@
       "serviceActions": {
         "yarpapigateway": "StartDebugging",
         "warrantyclaim.api": "StartDebugging",
-<<<<<<< HEAD
-        "vehicle.api": "StartDebugging"
-=======
+        "vehicle.api": "StartDebugging",
         "partcatalog.api": "StartDebugging"
->>>>>>> Vu/PartCatalog
       }
     }
   }
