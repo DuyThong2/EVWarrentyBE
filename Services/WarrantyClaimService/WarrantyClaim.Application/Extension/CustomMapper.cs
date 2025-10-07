@@ -54,7 +54,9 @@ public class CustomMapper : Profile
                 EnumParser.ParseOrDefault(s.ClaimType, ClaimType.WARRANT)))
             .ForMember(d => d.Status, opt => opt.MapFrom(s =>
                 EnumParser.ParseOrDefault(s.Status, ClaimStatus.SUBMITTED)))
-            .ForMember(d => d.Items, opt => opt.Ignore());
+            .ForMember(d => d.Items, opt => opt.Ignore())
+            .ForMember(d => d.FileURL, opt => opt.Ignore());
+        
 
         // ===== ClaimItem <-> ClaimItemDto =====
         CreateMap<ClaimItem, ClaimItemDto>()
@@ -66,7 +68,8 @@ public class CustomMapper : Profile
                 EnumParser.ParseOrDefault(s.Status, ClaimItemStatus.PENDING)))
             .ForMember(d => d.Claim, opt => opt.Ignore())
             .ForMember(d => d.WorkOrders, opt => opt.Ignore())
-            .ForMember(d => d.PartSupplies, opt => opt.Ignore());
+            .ForMember(d => d.PartSupplies, opt => opt.Ignore())
+            .ForMember(d => d.ImgURLs, opt => opt.Ignore());
 
 
         CreateMap<PartSupply, PartSupplyDto>();
