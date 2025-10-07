@@ -44,7 +44,10 @@ namespace Vehicle.Infrastructure.Repositories
         public async Task<PaginatedResult<Vehicle.Domain.Models.Vehicle>> GetPagedAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default)
         {
             var zeroBased = pageIndex <= 0 ? 0 : pageIndex - 1;
-            var query = _dbContext.Vehicles.AsNoTracking().OrderByDescending(v => v.CreatedAt);
+            var query = _dbContext.Vehicles.AsNoTracking()
+                .Include(v => v.Customer)
+                .Include(v => v.Parts)
+                .OrderByDescending(v => v.CreatedAt);
             var count = await query.CountAsync(cancellationToken);
             var data = await query.Skip(zeroBased * pageSize).Take(pageSize).ToListAsync(cancellationToken);
             return new PaginatedResult<Vehicle.Domain.Models.Vehicle>(zeroBased, pageSize, count, data);
@@ -52,13 +55,19 @@ namespace Vehicle.Infrastructure.Repositories
 
         public async Task<Vehicle.Domain.Models.Vehicle?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _dbContext.Vehicles.AsNoTracking().FirstOrDefaultAsync(v => v.VehicleId == id, cancellationToken);
+            return await _dbContext.Vehicles.AsNoTracking()
+                .Include(v => v.Customer)
+                .Include(v => v.Parts)
+                .FirstOrDefaultAsync(v => v.VehicleId == id, cancellationToken);
         }
 
         public async Task<PaginatedResult<Vehicle.Domain.Models.Vehicle>> FilterAsync(VehicleFilter filter, int pageIndex, int pageSize, CancellationToken cancellationToken = default)
         {
             var zeroBased = pageIndex <= 0 ? 0 : pageIndex - 1;
-            var query = _dbContext.Vehicles.AsNoTracking().AsQueryable();
+            var query = _dbContext.Vehicles.AsNoTracking()
+                .Include(v => v.Customer)
+                .Include(v => v.Parts)
+                .AsQueryable();
 
             if (filter is not null)
             {

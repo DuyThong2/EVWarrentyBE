@@ -72,23 +72,6 @@ namespace EVWUser.API.Repositories.Impl
             }
         }
 
-        //public async Task<List<User>> GetUsersByRoleId(Guid roleId, PaginationRequest request)
-        //{
-        //    try
-        //    {
-        //        var users = await _context.Users
-        //            .Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId))
-        //            .Skip(request.PageIndex * request.PageSize)
-        //            .Take(request.PageSize)
-        //            .ToListAsync();
-        //        return users;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new InternalServerException("Error retrieving users by role id");
-        //    }
-        //}
-
         public async Task<PaginatedResult<User>> SearchAsync(Guid? roleId, string? email, PaginationRequest request)
         {
             try
@@ -97,7 +80,7 @@ namespace EVWUser.API.Repositories.Impl
 
                 if (!string.IsNullOrWhiteSpace(email))
                 {
-                    query = query.Where(u => u.Email.Contains(email, StringComparison.OrdinalIgnoreCase));
+                    query = query.Where(u => u.Email.ToLower().Contains(email.ToLower()));
                 }
 
                 if (roleId.HasValue && roleId != Guid.Empty)
@@ -108,7 +91,7 @@ namespace EVWUser.API.Repositories.Impl
                 var totalCount = await query.LongCountAsync();
 
                 var data = await query
-                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Skip((request.PageIndex) * request.PageSize)
                     .Take(request.PageSize)
                     .ToListAsync();
 

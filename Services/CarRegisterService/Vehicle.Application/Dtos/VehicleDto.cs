@@ -21,8 +21,7 @@ namespace Vehicle.Application.Dtos
         public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-        public CustomerDto? Customer { get; set; }
+        public CustomerBriefDto? Customer { get; set; }
         public List<VehiclePartDto> Parts { get; set; } = new();
     }
 }

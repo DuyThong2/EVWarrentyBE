@@ -24,5 +24,6 @@ namespace Vehicle.Domain.Models
         // Navigation
         public Customer Customer { get; set; } = null!;
         public ICollection<VehiclePart> Parts { get; set; } = new List<VehiclePart>();
+        public ICollection<VehicleImage> Images { get; set; } = new List<VehicleImage>();
     }
 }

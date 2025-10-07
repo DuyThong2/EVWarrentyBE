@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BuildingBlocks.Email.Abstractions;
+using BuildingBlocks.Email.Models;
+using BuildingBlocks.Email.Templates;
 using BuildingBlocks.Exceptions;
 using EVWUser.API.Dtos;
 using EVWUser.API.Enums;
@@ -16,12 +19,16 @@ namespace EVWUser.API.Services.Impl
         private readonly IUserService _userService;
         private readonly IJwtService _jwtService;
         private readonly IMapper _mapper;
+        private readonly IEmailSender _emailSender;
+        //private readonly TemplateRenderer _renderer;
 
-        public AuthService(IUserService userService, IJwtService jwtService, IMapper mapper)
+        public AuthService(IUserService userService, IJwtService jwtService, IMapper mapper, IEmailSender emailSender)
         {
             _userService = userService;
             _jwtService = jwtService;
             _mapper = mapper;
+            _emailSender = emailSender;
+            //_renderer = new();
         }
 
         public async Task<LoginResponse> Login(LoginRequest request)
@@ -37,6 +44,32 @@ namespace EVWUser.API.Services.Impl
                 }
 
                 var token = _jwtService.GenerateJwtToken(user);
+
+//                var renderer = new TemplateRenderer(
+//    Path.Combine(AppContext.BaseDirectory, "Templates", "Layout.html")
+//);
+
+//                var body = renderer.Render(
+//            "Welcome to EV Warranty",
+//            $"<h2>Hello {user.Username},</h2><p>Thank you for registering!</p>"
+//        );
+
+//                var message = new EmailMessage
+//                {
+//                    To = new List<string> { "trankimnha272727@gmail.com" },
+//                    Subject = "Welcome to EV Warranty",
+//                    Body = body,
+//                    IsHtml = true
+//                };
+
+//                try
+//                {
+//                    await _emailSender.SendEmailAsync(message);
+//                }
+//                catch (Exception ex)
+//                {
+//                    throw new Exception("Failed to send email: " + ex.Message);
+//                }
 
                 return new LoginResponse
                 {

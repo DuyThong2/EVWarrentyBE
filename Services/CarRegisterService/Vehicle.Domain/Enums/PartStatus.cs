@@ -5,6 +5,7 @@
         Installed,
         Removed,
         Scrapped,
-        Lost
+        Lost,
+        Deleted
     }
 }
