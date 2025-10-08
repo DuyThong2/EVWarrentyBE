@@ -23,16 +23,21 @@ namespace Vehicle.Application.Commands
 
             var customer = _mapper.Map<Customer>(request.Customer);
             customer.CustomerId = customerId;
+            customer.CreatedAt = DateTime.UtcNow;
+            customer.UpdatedAt = DateTime.UtcNow;
 
             foreach (var vehicle in customer.Vehicles)
             {
                 vehicle.VehicleId = Guid.NewGuid();
                 vehicle.CustomerId = customerId;
+                vehicle.CreatedAt = DateTime.UtcNow;
+                vehicle.UpdatedAt = DateTime.UtcNow;
 
                 foreach (var part in vehicle.Parts)
                 {
                     part.PartId = Guid.NewGuid();
                     part.VehicleId = vehicle.VehicleId;
+                   
                 }
             }
 

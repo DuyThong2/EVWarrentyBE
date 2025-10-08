@@ -11,6 +11,7 @@ using Vehicle.Application.CQRS.Customers.Queries.GetCustomerById;
 using Vehicle.Application.CQRS.Customers.Queries.GetCustomersByFilter;
 using Vehicle.Application.CQRS.Customers.Queries.GetCustomersPage;
 using Vehicle.Application.Dtos;
+using Vehicle.Domain.Enums;
 
 namespace Vehicle.API.Controllers
 {
@@ -99,7 +100,7 @@ namespace Vehicle.API.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,
-            [FromBody] CustomerDto customer,
+            [FromBody] UpdateCustomerDto customer,
             CancellationToken cancellationToken = default)
         {
             if (id == Guid.Empty || customer == null)
@@ -122,6 +123,42 @@ namespace Vehicle.API.Controllers
             {
                 var result = await _sender.Send(new DeleteCustomerCommand(id), cancellationToken);
                 return Ok(result); // { isDeleted = true }
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        // PATCH: /api/customers/{id}/toggle-delete
+        [HttpPatch("{id:guid}/toggle-delete")]
+        public async Task<IActionResult> ToggleDelete(Guid id, CancellationToken cancellationToken = default)
+        {
+            if (id == Guid.Empty)
+                return BadRequest();
+
+            // Load current status
+            try
+            {
+                var current = await _sender.Send(new GetCustomerByIdQuery(id), cancellationToken);
+                var targetStatus = current.Customer.Status == nameof(CustomerStatus.Deleted)
+                    ? nameof(CustomerStatus.Active)
+                    : nameof(CustomerStatus.Deleted);
+
+                var update = new UpdateCustomerDto
+                {
+                    CustomerId = id,
+                    FullName = current.Customer.FullName,
+                    Email = current.Customer.Email,
+                    PhoneNumber = current.Customer.PhoneNumber,
+                    Address = current.Customer.Address,
+                    Status = targetStatus,
+                    CreatedAt = current.Customer.CreatedAt,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                var result = await _sender.Send(new UpdateCustomerCommand(update), cancellationToken);
+                return Ok(result);
             }
             catch (KeyNotFoundException)
             {

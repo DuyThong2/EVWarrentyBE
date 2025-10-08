@@ -29,13 +29,13 @@ namespace EVWUser.API.Controllers
         }
 
         /// <summary>
-        /// Get users with pagination
+        /// Get users with filter and pagination
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index, [FromQuery] int pageSize)
         {
-            var users = await _userService.GetPagedAsync(new PaginationRequest(index, pageSize));
+            var users = await _userService.SearchAsync(roleId, email, new PaginationRequest(index, pageSize));
             return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users retrieved successfully"));
         }
 
