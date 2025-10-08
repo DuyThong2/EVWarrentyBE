@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaimItem
 {
     public record UpdateClaimItemCommand(
-        ClaimItemDto Item
+        UpdateClaimItemDto Item
     ) : ICommand<UpdateClaimItemResult>;
 
     public record UpdateClaimItemResult(bool IsUpdated);
@@ -36,6 +36,8 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaimItem
 
             RuleFor(x => x.Item.ImgURLs)
                 .MaximumLength(4000);
+
+            RuleFor(x => x.Item.ClaimId).NotEmpty().WithMessage("claim Id is required");
 
             //RuleFor(x => x.Item.Status)
             //    .Must(s => string.IsNullOrWhiteSpace(s) || Enum.TryParse<ClaimItemStatus>(s, true, out _))

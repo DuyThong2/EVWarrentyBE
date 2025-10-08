@@ -74,10 +74,20 @@ namespace WarrantyClaim.Application.Extension
                 var url = StripQuery(r.Url);
                 if (string.IsNullOrWhiteSpace(key) && string.IsNullOrWhiteSpace(url))
                     continue;
-                outList.Add(new FileRefDto { Key = key, Url = url });
+
+                outList.Add(new FileRefDto
+                {
+                    Key = key,
+                    Url = url,
+                    Name = string.IsNullOrWhiteSpace(r.Name) ? null : r.Name!.Trim(),
+                    Size = r.Size,
+                    ContentType = string.IsNullOrWhiteSpace(r.ContentType) ? null : r.ContentType!.Trim(),
+                    UploadedAtUtc = r.UploadedAtUtc
+                });
             }
             return outList;
         }
+
 
         /// <summary>Bỏ trùng theo Key (ưu tiên), fallback Url (so sánh ignore-case)</summary>
         public static List<FileRefDto> Distinct(IEnumerable<FileRefDto> refs)
@@ -140,7 +150,11 @@ namespace WarrantyClaim.Application.Extension
                 res.Add(new FileRefDto
                 {
                     Key = u.Key,
-                    Url = StripQuery(u.Url) // permanent, nhưng strip cho chắc
+                    Url = StripQuery(u.Url),
+                    Name = u.OriginalFileName,          
+                    Size = u.Size,                      
+                    ContentType = u.ContentType,       
+                    UploadedAtUtc = u.UploadedAtUtc    
                 });
             }
             return res;

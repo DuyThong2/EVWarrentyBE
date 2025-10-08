@@ -12,9 +12,11 @@ using WarrantyClaim.Application.Extension;         // FileRefUtils
 [Route("api/[controller]")]
 public sealed class ClaimUploadsController : ControllerBase
 {
+    private readonly IS3Storage _storage;
     private readonly ISender _mediator;
-    public ClaimUploadsController(ISender mediator)
+    public ClaimUploadsController(IS3Storage storage, ISender mediator)
     {
+        _storage = storage;
         _mediator = mediator;
     }
 
@@ -34,6 +36,32 @@ public sealed class ClaimUploadsController : ControllerBase
         Console.WriteLine($"[Reconcile] claim={claimId} uploaded={resp.UploadedFiles.Count} desired={resp.Desired.Count}");
 
         return Created(string.Empty, resp);
+    }
+
+    [HttpPost("{claimItemId:guid}")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(100 * 1024 * 1024)]
+    [ProducesResponseType(typeof(ReconcileResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> ReconcileItem(
+        [FromRoute] Guid claimItemId,
+        [FromForm] UploadRequest req,
+        CancellationToken ct)
+    {
+        var resp = await _mediator.Send(
+            new UpdateClaimItemFilesCommand(claimItemId, req.KeepJson, req.Files, req.Meta), ct);
+
+        Console.WriteLine($"[ClaimItem Reconcile] item={claimItemId} uploaded={resp.UploadedFiles.Count} desired={resp.Desired.Count}");
+
+        return Created(string.Empty, resp);
+    }
+
+    [HttpGet("download/{**key}")]
+    public async Task<IActionResult> Download([FromRoute] string key, [FromQuery] string? filename)
+    {
+        var file = await _storage.DownloadAsync(key);
+        if (!string.IsNullOrWhiteSpace(filename))
+            file.FileDownloadName = filename;
+        return file; 
     }
 }
 

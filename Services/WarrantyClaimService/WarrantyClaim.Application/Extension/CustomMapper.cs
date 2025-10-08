@@ -74,6 +74,13 @@ public class CustomMapper : Profile
 
         CreateMap<PartSupply, PartSupplyDto>();
 
+        CreateMap<UpdateClaimDto, Claim>()
+            .ForMember(d => d.Items, opt => opt.Ignore());
+
+        CreateMap<UpdateClaimItemDto, ClaimItem>()
+            .ForMember(d => d.WorkOrders, opt => opt.Ignore())
+            .ForMember(d => d.PartSupplies, opt => opt.Ignore());
+
     }
 
 

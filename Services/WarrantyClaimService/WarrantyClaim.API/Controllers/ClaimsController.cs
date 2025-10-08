@@ -121,22 +121,20 @@ namespace WarrantyClaim.API.Controllers
             );
         }
 
-        // PUT: /api/claims/{id}?replaceAllItems=false
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,
-            [FromBody] ClaimDto claim,
+            [FromBody] UpdateClaimDto claim,
             [FromQuery] bool replaceAllItems = false,
             CancellationToken cancellationToken = default)
         {
-           
             claim.Id = id;
             var result = await _sender.Send(
                 new UpdateClaimCommand(claim, replaceAllItems),
                 cancellationToken
             );
 
-            return Ok(result); // { isUpdated = true }
+            return Ok(result);
         }
 
         // DELETE: /api/claims/{id}

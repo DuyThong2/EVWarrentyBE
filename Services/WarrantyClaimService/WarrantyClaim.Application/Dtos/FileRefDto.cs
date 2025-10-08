@@ -3,7 +3,11 @@ namespace WarrantyClaim.Application.Dtos
 {
     public sealed class FileRefDto
     {
-        public string? Key { get; set; }   // ví dụ: uploads/images/abc.jpg
-        public string? Url { get; set; }   // permanent url (CDN hoặc /api/download/{key})
+        public string? Key { get; set; }
+        public string? Url { get; set; }              // stable view url (strip query)
+        public string? Name { get; set; }             // display name
+        public long? Size { get; set; }               // bytes
+        public string? ContentType { get; set; }      // e.g. image/png
+        public DateTime? UploadedAtUtc { get; set; }  // ISO8601
     }
 }
