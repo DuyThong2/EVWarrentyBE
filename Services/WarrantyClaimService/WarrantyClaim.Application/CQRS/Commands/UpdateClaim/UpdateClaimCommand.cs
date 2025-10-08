@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaim
 {
     public record UpdateClaimCommand(
-    UpdateClaimDto Claim,                  // đổi sang ClaimDto để có Id
-    bool ReplaceAllItems = false
-) : ICommand<UpdateClaimResult>;
+        UpdateClaimDto Claim,                  // đổi sang ClaimDto để có Id
+        bool ReplaceAllItems = false
+    ) : ICommand<UpdateClaimResult>;
 
     public record UpdateClaimResult(bool IsUpdated);
 
