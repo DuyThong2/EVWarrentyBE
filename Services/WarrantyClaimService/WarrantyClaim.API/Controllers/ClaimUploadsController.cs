@@ -4,9 +4,10 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WarrantyClaim.Application.CQRS.Commands.UpdateClaimFile;
+using WarrantyClaim.Application.CQRS.Commands.UpdateClaimItemImages;
 using WarrantyClaim.Application.Data;
 using WarrantyClaim.Application.Dtos;
-using WarrantyClaim.Application.Extension;         // FileRefUtils
+using WarrantyClaim.Application.Extension;         
 
 [ApiController]
 [Route("api/[controller]")]
@@ -38,7 +39,7 @@ public sealed class ClaimUploadsController : ControllerBase
         return Created(string.Empty, resp);
     }
 
-    [HttpPost("{claimItemId:guid}")]
+    [HttpPost("item/{claimItemId:guid}")]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(100 * 1024 * 1024)]
     [ProducesResponseType(typeof(ReconcileResponseDto), StatusCodes.Status201Created)]
