@@ -1,0 +1,48 @@
+### Customers Filter API Examples
+### Base URL: https://localhost:7001/api/customers/filter
+
+### 1. Get all customers (default sort by CreatedAt desc)
+GET {{baseUrl}}?pageIndex=1&pageSize=10
+
+### 2. Filter by FullName (contains search)
+GET {{baseUrl}}?fullName=John&pageIndex=1&pageSize=10
+
+### 3. Filter by Email (contains search)
+GET {{baseUrl}}?email=@gmail.com&pageIndex=1&pageSize=10
+
+### 4. Filter by PhoneNumber (contains search)
+GET {{baseUrl}}?phoneNumber=0123&pageIndex=1&pageSize=10
+
+### 5. Filter by Address (contains search)
+GET {{baseUrl}}?address=Hanoi&pageIndex=1&pageSize=10
+
+### 6. Filter by Status (enum values: Active, Inactive, Suspended, Deleted)
+GET {{baseUrl}}?status=Active&pageIndex=1&pageSize=10
+
+### 7. Filter by CustomerId (exact match)
+GET {{baseUrl}}?customerId=12345678-1234-1234-1234-123456789012&pageIndex=1&pageSize=10
+
+### 8. Multiple filters combined
+GET {{baseUrl}}?fullName=John&status=Active&pageIndex=1&pageSize=5
+
+### 9. Sort by FullName ascending
+GET {{baseUrl}}?sortBy=FullName&sortDir=Asc&pageIndex=1&pageSize=10
+
+### 10. Sort by Email descending
+GET {{baseUrl}}?sortBy=Email&sortDir=Desc&pageIndex=1&pageSize=10
+
+### 11. Sort by PhoneNumber ascending
+GET {{baseUrl}}?sortBy=PhoneNumber&sortDir=Asc&pageIndex=1&pageSize=10
+
+### 12. Sort by Address descending
+GET {{baseUrl}}?sortBy=Address&sortDir=Desc&pageIndex=1&pageSize=10
+
+### 13. Complex filter with multiple criteria
+GET {{baseUrl}}?fullName=John&email=@gmail.com&status=Active&sortBy=CreatedAt&sortDir=Desc&pageIndex=1&pageSize=5
+
+### Available Sort Options:
+### sortBy: FullName, Email, PhoneNumber, Address, CreatedAt, CustomerId
+### sortDir: Asc, Desc
+### Status values: Active, Inactive, Suspended, Deleted
+
+@baseUrl = https://localhost:7001/api/customers/filter
