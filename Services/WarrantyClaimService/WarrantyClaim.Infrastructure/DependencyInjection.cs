@@ -15,7 +15,6 @@ public static class DependencyInjection
         (this IServiceCollection services, IConfiguration configuration)
     {
 
-        services.AddAwsS3Storage(configuration);
 
 
 

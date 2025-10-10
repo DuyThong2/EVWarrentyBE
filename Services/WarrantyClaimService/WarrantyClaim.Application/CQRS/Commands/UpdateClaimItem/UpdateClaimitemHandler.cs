@@ -30,6 +30,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaimItem
                 throw new KeyNotFoundException($"ClaimItem {dto.Id} not found.");
 
             // Cập nhật scalar (chỉ đè khi DTO có giá trị)
+            item.ClaimId = dto.ClaimId;
             if (dto.PartSerialNumber is not null) item.PartSerialNumber = dto.PartSerialNumber;
             if (dto.PayAmount.HasValue) item.PayAmount = dto.PayAmount;
             if (dto.PaidBy is not null) item.PaidBy = dto.PaidBy;

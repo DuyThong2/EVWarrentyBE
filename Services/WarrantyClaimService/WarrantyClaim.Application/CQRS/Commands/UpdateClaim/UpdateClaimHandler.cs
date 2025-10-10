@@ -42,13 +42,13 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaim
         }
 
         
-        private void UpdateClaimScalar(ClaimDto dto, Claim claim)
+        private void UpdateClaimScalar(UpdateClaimDto dto, Claim claim)
         {
             _mapper.Map(dto, claim);
         }
 
 
-        private void UpsertClaimItems(ClaimDto dto, Claim claim)
+        private void UpsertClaimItems(UpdateClaimDto dto, Claim claim)
         {
             if (dto.Items is null) return;
 
