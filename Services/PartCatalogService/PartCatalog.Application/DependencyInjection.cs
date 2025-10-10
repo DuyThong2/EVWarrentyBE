@@ -1,6 +1,8 @@
 ﻿using BuildingBlocks.Behaviors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PartCatalog.Application.Data;
+using PartCatalog.Application.Extensions;
 using System.Reflection;
 
 namespace PartCatalog.Application
@@ -17,6 +19,7 @@ namespace PartCatalog.Application
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             });
 
+            services.AddAutoMapper(cfg => { }, typeof(CustomMapper));
             //services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
             return services;
