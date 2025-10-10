@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.CQRS;
+using PartCatalog.Application.DTOs;
 
 namespace PartCatalog.Application.CQRS.Queries.GetPartBySerialNumber
 {
-    internal class GetPartBySerialNumberQuery
-    {
-    }
+    public record GetPartBySerialNumberQuery(string SerialNumber)
+        : IQuery<GetPartBySerialNumberResult>;
+
+    public record GetPartBySerialNumberResult(PartDto? Part);
 }

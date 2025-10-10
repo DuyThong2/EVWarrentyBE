@@ -9,6 +9,7 @@ using PartCatalog.Application.CQRS.Commands.UpdatePart;
 using PartCatalog.Application.CQRS.Queries.GetAllParts;
 using PartCatalog.Application.CQRS.Queries.GetPartByFilter;
 using PartCatalog.Application.CQRS.Queries.GetPartById;
+using PartCatalog.Application.CQRS.Queries.GetPartBySerialNumber;
 using PartCatalog.Application.DTOs;
 
 namespace PartCatalog.API.Controllers
@@ -114,6 +115,21 @@ namespace PartCatalog.API.Controllers
         {
             var result = await _sender.Send(new GetAllPartsQuery(pageIndex, pageSize), cancellationToken);
             return Ok(result);
+        }
+
+        // ===== Get by Serial Number =====
+        [HttpGet("serial/{serialNumber}")]
+        public async Task<IActionResult> GetBySerialNumber(string serialNumber, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return BadRequest("Serial number is required.");
+
+            var result = await _sender.Send(new GetPartBySerialNumberQuery(serialNumber), cancellationToken);
+
+            if (result.Part == null)
+                return NotFound($"Part with serial number '{serialNumber}' not found.");
+
+            return Ok(result.Part);
         }
     }
 }

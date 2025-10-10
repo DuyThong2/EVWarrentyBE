@@ -52,6 +52,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vehicle.Infrastructure", "Services\CarRegisterService\Vehicle.Infrastructure\Vehicle.Infrastructure.csproj", "{5CDFC285-76B2-C26E-C7EE-013BE183A7D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Storage", "BuildingBlocks\BuildingBlocks.Storage\BuildingBlocks.Storage.csproj", "{58E74EC0-754A-4597-BF81-2E527FD1AE4F}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingBlocks.Email", "BuildingBlocks\BuildingBlocks.Email\BuildingBlocks.Email.csproj", "{27FC8D86-DD36-4B86-B6C7-1936926481D2}"
 EndProject
 Global
