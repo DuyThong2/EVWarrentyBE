@@ -119,6 +119,35 @@ namespace Vehicle.API.Controllers
                 throw new InternalServerException("An error occurred while filtering vehicles", ex.Message);
             }
         }
+        // GET: /api/vehicles/by-vin/{vin}
+        [HttpGet("by-vin/{vin}")]
+        public async Task<IActionResult> GetByVin(string vin, CancellationToken cancellationToken)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(vin))
+                    throw new BadRequestException("VIN is required");
+
+                var entity = await _repository.GetByVinAsync(vin, cancellationToken);
+
+                if (entity is null)
+                    throw new NotFoundException("Vehicle with VIN", vin);
+
+                return Ok(_mapper.Map<VehicleDto>(entity));
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while retrieving the vehicle by VIN", ex.Message);
+            }
+        }
 
         // GET: /api/vehicles/by-customer/{customerId}
         [HttpGet("by-customer/{customerId:guid}")]
