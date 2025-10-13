@@ -34,6 +34,12 @@ namespace PartCatalog.API.Controllers
             if (part is null)
                 return BadRequest("Part data is required.");
 
+            // Disable model validation temporarily
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _sender.Send(new CreatePartCommand(part), cancellationToken);
 
             return CreatedAtAction(

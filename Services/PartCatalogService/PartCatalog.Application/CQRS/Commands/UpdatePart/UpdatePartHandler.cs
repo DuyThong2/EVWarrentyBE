@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
-using MapsterMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
 using PartCatalog.Domain.Models;
