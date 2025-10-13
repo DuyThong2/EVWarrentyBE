@@ -74,6 +74,10 @@ namespace Vehicle.Application.Extension
                 .ForMember(d => d.Status, opt => opt.MapFrom(s =>
                     ParseEnumOrDefault(s.Status, VehicleImageStatus.Active)));
             CreateMap<CustomerDto, Customer>();
+
+            // ===== WarrantyHistory =====
+            CreateMap<WarrantyHistory, WarrantyHistoryDto>()
+                .ForMember(d => d.VIN, opt => opt.MapFrom(s => s.Vehicle.VIN));
         }
 
         private static TEnum ParseEnumOrDefault<TEnum>(string? value, TEnum fallback)
@@ -85,6 +89,28 @@ namespace Vehicle.Application.Extension
             return Enum.TryParse<TEnum>(value.Trim(), true, out var parsed)
                 ? parsed
                 : fallback;
+        }
+
+        public static WarrantyHistoryDto MapToWarrantyHistoryDto(WarrantyHistory warrantyHistory)
+        {
+            return new WarrantyHistoryDto
+            {
+                HistoryId = warrantyHistory.HistoryId,
+                VehicleId = warrantyHistory.VehicleId,
+                VIN = warrantyHistory.Vehicle?.VIN ?? string.Empty,
+                PartId = warrantyHistory.PartId,
+                ClaimId = warrantyHistory.ClaimId,
+                PolicyId = warrantyHistory.PolicyId,
+                EventType = warrantyHistory.EventType.ToString(),
+                Description = warrantyHistory.Description,
+                PerformedBy = warrantyHistory.PerformedBy,
+                ServiceCenterName = warrantyHistory.ServiceCenterName,
+                WarrantyStartDate = warrantyHistory.WarrantyStartDate,
+                WarrantyEndDate = warrantyHistory.WarrantyEndDate,
+                CreatedAt = warrantyHistory.CreatedAt,
+                UpdatedAt = warrantyHistory.UpdatedAt,
+                Status = warrantyHistory.Status.ToString()
+            };
         }
     }
 }

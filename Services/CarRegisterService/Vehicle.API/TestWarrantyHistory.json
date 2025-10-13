@@ -1,0 +1,13 @@
+{
+  "vehicleId": "REPLACE_WITH_ACTUAL_VEHICLE_ID",
+  "partId": null,
+  "claimId": null,
+  "policyId": null,
+  "eventType": 0,
+  "description": "Test warranty history - Sửa chữa động cơ điện",
+  "performedBy": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "serviceCenterName": "Trung tâm bảo hành Hà Nội",
+  "warrantyStartDate": "2025-01-01T00:00:00Z",
+  "warrantyEndDate": "2025-12-31T23:59:59Z",
+  "status": 0
+}

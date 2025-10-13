@@ -8,6 +8,8 @@ namespace Vehicle.Application.Data
         DbSet<Customer> Customers { get; }
         DbSet<Vehicle.Domain.Models.Vehicle> Vehicles { get; }
         DbSet<VehiclePart> VehicleParts { get; }
+        DbSet<VehicleImage> VehicleImages { get; }
+        DbSet<WarrantyHistory> WarrantyHistories { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

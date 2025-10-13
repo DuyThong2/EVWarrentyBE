@@ -1,0 +1,12 @@
+### Get Vehicle IDs for testing WarrantyHistory
+
+### 1. Get all vehicles (first page)
+GET {{host}}/api/vehicles?pageIndex=1&pageSize=5
+Content-Type: application/json
+
+### 2. Get vehicles by filter
+GET {{host}}/api/vehicles/filter?pageIndex=1&pageSize=5
+Content-Type: application/json
+
+### Variables
+@host = https://localhost:7001

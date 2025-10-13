@@ -33,6 +33,7 @@ namespace Vehicle.Infrastructure
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IVehiclePartRepository, VehiclePartRepository>();
             services.AddScoped<IVehicleImageRepository, VehicleImageRepository>();
+            services.AddScoped<IWarrantyHistoryRepository, WarrantyHistoryRepository>();
 
             return services;
         }

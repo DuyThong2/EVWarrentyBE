@@ -17,5 +17,6 @@ namespace Vehicle.Domain.Models
 
         // Navigation
         public Vehicle Vehicle { get; set; } = null!;
+        public ICollection<WarrantyHistory> WarrantyHistories { get; set; } = new List<WarrantyHistory>();
     }
 }
