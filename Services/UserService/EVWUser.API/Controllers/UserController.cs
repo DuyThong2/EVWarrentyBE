@@ -1,12 +1,15 @@
-﻿using BuildingBlocks.Pagination;
+﻿using BuildingBlocks.Authorization;
+using BuildingBlocks.Pagination;
 using EVWUser.Business.Dtos;
 using EVWUser.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVWUser.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -32,6 +35,7 @@ namespace EVWUser.API.Controllers
         /// Get users with filter and pagination
         /// </summary>
         [HttpGet]
+        [HasRoles("Admin")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index, [FromQuery] int pageSize)
         {

@@ -22,7 +22,11 @@ namespace EVWUser.Data.Repositories.Impl
                 if (string.IsNullOrWhiteSpace(email))
                     throw new BadRequestException("Email is required");
 
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower()) ?? null;
+                var user = await _context.Users
+                    .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                    .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower()) ?? null;
+
                 if (user == null)
                     throw new NotFoundException("Email not found");
 
