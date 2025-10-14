@@ -69,11 +69,13 @@ namespace PartCatalog.API.Controllers
 
         // ===== Update =====
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdatePart(Guid id, [FromBody] UpdatePartCommand command)
+        public async Task<IActionResult> UpdatePart(Guid id, [FromBody] PartDto partDto)
         {
             if (id == Guid.Empty)
                 return BadRequest();
 
+            // Tạo command với PartId từ route parameter
+            var command = new UpdatePartCommand(id, partDto);
             var result = await _sender.Send(command);
 
             if (!result.IsSuccess)
