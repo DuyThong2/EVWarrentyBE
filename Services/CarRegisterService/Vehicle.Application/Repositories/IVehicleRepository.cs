@@ -14,6 +14,8 @@ namespace Vehicle.Application.Repositories
         Task<Guid> CreateAsync(Vehicle.Domain.Models.Vehicle vehicle, CancellationToken cancellationToken = default);
         Task<bool> UpdateAsync(Vehicle.Domain.Models.Vehicle vehicle, CancellationToken cancellationToken = default);
         Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<Vehicle.Domain.Models.Vehicle?> GetByVinAsync(string vin, CancellationToken cancellationToken = default);
+
     }
 }
 

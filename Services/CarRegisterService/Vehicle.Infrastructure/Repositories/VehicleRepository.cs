@@ -117,6 +117,14 @@ namespace Vehicle.Infrastructure.Repositories
             var data = await query.Skip(zeroBased * pageSize).Take(pageSize).ToListAsync(cancellationToken);
             return new PaginatedResult<Vehicle.Domain.Models.Vehicle>(zeroBased, pageSize, count, data);
         }
+        public async Task<Vehicle.Domain.Models.Vehicle?> GetByVinAsync(string vin, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Vehicles.AsNoTracking()
+                .Include(v => v.Customer)
+                .Include(v => v.Parts)
+                .FirstOrDefaultAsync(v => v.VIN == vin, cancellationToken);
+        }
+
 
         public async Task<bool> UpdateAsync(Vehicle.Domain.Models.Vehicle vehicle, CancellationToken cancellationToken = default)
         {

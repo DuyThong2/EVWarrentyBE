@@ -6,6 +6,7 @@
         Sold,
         Stolen,
         Scrapped,
-        Deleted
+        Deleted,
+        UnderMaintenance
     }
 }
