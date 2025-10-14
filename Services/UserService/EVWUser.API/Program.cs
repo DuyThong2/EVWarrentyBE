@@ -1,14 +1,11 @@
 ﻿using BuildingBlocks.Behaviors;
 using BuildingBlocks.Email;
 using BuildingBlocks.Exceptions.Handler;
-using EVWUser.API.Data;
-using EVWUser.API.Data.Extensions;
-using EVWUser.API.Extensions.AutoMapper;
-using EVWUser.API.Extensions.Jwt;
-using EVWUser.API.Repositories;
-using EVWUser.API.Repositories.Impl;
-using EVWUser.API.Services;
-using EVWUser.API.Services.Impl;
+using EVWUser.API.Extensions;
+using EVWUser.Data.Repositories;
+using EVWUser.Data.Repositories.Impl;
+using EVWUser.Business.Services;
+using EVWUser.Business.Services.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +15,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
+using EVWUser.Business.AutoMapper;
+using EVWUser.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

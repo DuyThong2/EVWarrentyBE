@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Pagination;
-using EVWUser.API.Dtos;
-using EVWUser.API.Services;
+using EVWUser.Business.Dtos;
+using EVWUser.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVWUser.API.Controllers
