@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Behaviors;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PartCatalog.Application.Data;
@@ -18,6 +19,8 @@ namespace PartCatalog.Application
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             });
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddAutoMapper(cfg => { }, typeof(CustomMapper));
             //services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());

@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
-using MapsterMapper;
+using AutoMapper;
 using PartCatalog.Application.Data;
 using PartCatalog.Domain.Models;
 
@@ -21,7 +21,7 @@ namespace PartCatalog.Application.CQRS.Commands.CreatePart
         {
             // Map DTO -> Entity
             var part = _mapper.Map<Part>(request.Part);
-            part.PartId = Guid.NewGuid();
+            //part.PartId = Guid.NewGuid();
 
             // Add vào DbContext
             _context.Parts.Add(part);

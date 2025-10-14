@@ -9,6 +9,7 @@ using PartCatalog.Application.CQRS.Commands.UpdatePart;
 using PartCatalog.Application.CQRS.Queries.GetAllParts;
 using PartCatalog.Application.CQRS.Queries.GetPartByFilter;
 using PartCatalog.Application.CQRS.Queries.GetPartById;
+using PartCatalog.Application.CQRS.Queries.GetPartBySerialNumber;
 using PartCatalog.Application.DTOs;
 
 namespace PartCatalog.API.Controllers
@@ -32,6 +33,12 @@ namespace PartCatalog.API.Controllers
         {
             if (part is null)
                 return BadRequest("Part data is required.");
+
+            // Disable model validation temporarily
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             var result = await _sender.Send(new CreatePartCommand(part), cancellationToken);
 
@@ -62,11 +69,13 @@ namespace PartCatalog.API.Controllers
 
         // ===== Update =====
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdatePart(Guid id, [FromBody] UpdatePartCommand command)
+        public async Task<IActionResult> UpdatePart(Guid id, [FromBody] PartDto partDto)
         {
             if (id == Guid.Empty)
                 return BadRequest();
 
+            // Tạo command với PartId từ route parameter
+            var command = new UpdatePartCommand(id, partDto);
             var result = await _sender.Send(command);
 
             if (!result.IsSuccess)
@@ -114,6 +123,21 @@ namespace PartCatalog.API.Controllers
         {
             var result = await _sender.Send(new GetAllPartsQuery(pageIndex, pageSize), cancellationToken);
             return Ok(result);
+        }
+
+        // ===== Get by Serial Number =====
+        [HttpGet("serial/{serialNumber}")]
+        public async Task<IActionResult> GetBySerialNumber(string serialNumber, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return BadRequest("Serial number is required.");
+
+            var result = await _sender.Send(new GetPartBySerialNumberQuery(serialNumber), cancellationToken);
+
+            if (result.Part == null)
+                return NotFound($"Part with serial number '{serialNumber}' not found.");
+
+            return Ok(result.Part);
         }
     }
 }
