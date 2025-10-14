@@ -34,7 +34,11 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
 
             b.Property(x => x.Status)
                 .HasColumnName("status")
-                .HasMaxLength(20);
+                .HasDefaultValue(TechnicianStatus.ACTIVE)
+                .HasConversion(
+                    s => s.ToString(),
+                    dbStatus => (TechnicianStatus)Enum.Parse(typeof(TechnicianStatus), dbStatus)
+                );
 
             // Audit columns (không được chỉ rõ trong DBML) → giữ mặc định
         }

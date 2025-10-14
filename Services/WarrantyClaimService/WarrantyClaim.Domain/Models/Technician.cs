@@ -12,7 +12,7 @@ namespace WarrantyClaim.Domain.Models
         public string FullName { get; set; } = null!;
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public string? Status { get; set; }          
+        public TechnicianStatus Status { get; set; }          
 
         // Navs
         public ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();

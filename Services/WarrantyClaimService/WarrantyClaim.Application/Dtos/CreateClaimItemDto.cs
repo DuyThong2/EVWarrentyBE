@@ -13,7 +13,6 @@ namespace WarrantyClaim.Application.Dtos
         public string VIN { get; set; } = null!;
         public long? DistanceMeter { get; set; }
         public string? Description { get; set; }
-        public string? FileURL { get; set; }
         public decimal? TotalPrice { get; set; }
         public string? ClaimType { get; set; }
         public string? Status { get; set; }

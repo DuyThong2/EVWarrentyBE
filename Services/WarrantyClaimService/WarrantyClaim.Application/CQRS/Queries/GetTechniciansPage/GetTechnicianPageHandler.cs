@@ -70,10 +70,10 @@ namespace WarrantyClaim.Application.CQRS.Queries.GetTechniciansPage
                 if (!string.IsNullOrWhiteSpace(f.Status))
                 {
                     var st = f.Status.Trim();
-                    query = query.Where(t => t.Status.ToString().Equals(st, StringComparison.OrdinalIgnoreCase));
-                    // if (Enum.TryParse<TechnicianStatus>(st, true, out var parsed))
-                    //     query = query.Where(t => t.Status == parsed);
-                }
+                //query = query.Where(t => t.Status.ToString().Equals(st, StringComparison.OrdinalIgnoreCase));
+                if (Enum.TryParse<TechnicianStatus>(st, true, out var parsed))
+                    query = query.Where(t => t.Status == parsed);
+            }
 
                 return query;
             }

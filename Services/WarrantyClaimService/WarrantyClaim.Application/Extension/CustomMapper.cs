@@ -28,9 +28,14 @@ public class CustomMapper : Profile
             .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items ?? new List<CreateClaimItemDto>()));
 
         // ===== Technician =====
-        CreateMap<Technician, TechnicianDto>();
+        CreateMap<Technician, TechnicianDto>()
+            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
+
+        // DTO → Entity
         CreateMap<TechnicianDto, Technician>()
-            .ForMember(d => d.WorkOrders, opt => opt.Ignore());
+            .ForMember(d => d.WorkOrders, opt => opt.Ignore())
+            .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                EnumParser.ParseOrDefault(s.Status, TechnicianStatus.ACTIVE)));
 
         // ===== WorkOrder =====
         CreateMap<WorkOrder, WorkOrderDto>()
