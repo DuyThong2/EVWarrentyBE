@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WarrantyClaim.Application.Extension;
 
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateTechnican
 {
@@ -34,7 +35,20 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateTechnican
             tech.FullName = dto.FullName; // đã được validator đảm bảo not empty
             tech.Email = dto.Email;
             tech.Phone = dto.Phone;
-            tech.Status  = dto.Status;
+            if (!string.IsNullOrWhiteSpace(dto.Status))
+            {
+                if (EnumParser.TryParseEnum<TechnicianStatus>(dto.Status, out var parsed))
+                {
+                    tech.Status = parsed;
+                }
+                else
+                {
+                    // nếu giá trị sai (không parse được), có thể:
+                    // 1️⃣ Giữ nguyên trạng thái cũ (an toàn)
+                    // 2️⃣ Hoặc fallback về ACTIVE (nếu muốn)
+                    // tech.Status = TechnicianStatus.ACTIVE;
+                }
+            }
 
             // Parse Status string -> enum (nếu null/rỗng thì giữ nguyên)
             //if (!string.IsNullOrWhiteSpace(dto.Status) &&
