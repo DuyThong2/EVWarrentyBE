@@ -83,9 +83,9 @@ builder.Services.AddSwaggerGen(c =>{
         Version = "v1"
     });
 
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    //c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
 // CORS
@@ -121,22 +121,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 //app.UseExceptionHandler();
-app.UseCors("CorsPolicy");
+//app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Swagger middleware
-app.UseSwagger(c =>
-{
-    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-    {
-        swaggerDoc.Servers = new List<OpenApiServer>
-        {
-            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
-        };
-    });
-});
+app.UseSwagger(
+//    c =>
+//{
+//    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+//    {
+//        swaggerDoc.Servers = new List<OpenApiServer>
+//        {
+//            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
+//        };
+//    });
+//}
+
+);
 
 
 app.UseSwaggerUI(c =>

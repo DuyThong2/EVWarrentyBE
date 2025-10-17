@@ -79,6 +79,9 @@ namespace EVWUser.Data.Repositories.Impl
         {
             try
             {
+                var pageIndex = request.PageIndex < 0 ? 0 : request.PageIndex;
+                var pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
+
                 var query = _context.Users.AsQueryable();
 
                 if (!string.IsNullOrWhiteSpace(email))

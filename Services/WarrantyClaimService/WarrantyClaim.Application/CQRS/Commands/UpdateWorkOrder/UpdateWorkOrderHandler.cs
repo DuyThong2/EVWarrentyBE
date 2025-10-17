@@ -34,7 +34,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateWorkOrder
             wo.TechnicianId = dto.TechnicianId;
             wo.WorkingHours = dto.WorkingHours;
             wo.StartedAt = dto.StartedAt;
-            wo.EndDate = dto.EndDate;
+            //wo.EndDate = dto.EndDate;
 
             // Parse status string -> enum; nếu null/rỗng thì giữ nguyên
             if (!string.IsNullOrWhiteSpace(dto.Status) &&

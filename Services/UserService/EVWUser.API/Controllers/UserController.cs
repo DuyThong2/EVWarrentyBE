@@ -9,7 +9,6 @@ namespace EVWUser.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
-    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -35,11 +34,19 @@ namespace EVWUser.API.Controllers
         /// Get users with filter and pagination
         /// </summary>
         [HttpGet]
-        [HasRoles("Admin")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index, [FromQuery] int pageSize)
+        public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index = 1, [FromQuery] int pageSize= 10)
         {
-            var users = await _userService.SearchAsync(roleId, email, new PaginationRequest(index, pageSize));
+
+            var normalizedIndex = index < 1 ? 0 : index - 1;     // về 0-based
+            var normalizedSize = pageSize <= 0 ? 10 : pageSize; // chặn 0 hoặc âm
+
+            var users = await _userService.SearchAsync(
+                roleId,
+                email,
+                new PaginationRequest(normalizedIndex, normalizedSize)
+            );
+
             return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users retrieved successfully"));
         }
 
