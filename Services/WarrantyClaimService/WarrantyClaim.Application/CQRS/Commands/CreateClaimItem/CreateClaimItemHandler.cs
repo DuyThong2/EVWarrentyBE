@@ -39,6 +39,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateClaimItem
             {
                 Id = Guid.NewGuid(),
                 ClaimId = request.ClaimId,
+                VIN = dto.VIN,
                 PartSerialNumber = dto.PartSerialNumber,
                 PayAmount = dto.PayAmount,
                 PaidBy = dto.PaidBy,

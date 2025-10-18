@@ -23,6 +23,9 @@ namespace WarrantyClaim.Application.Dtos
     public class CreateClaimItemDto
     {
         public string? PartSerialNumber { get; set; }
+
+        public string VIN { get; set; } = null!;
+
         public decimal? PayAmount { get; set; }
         public string? PaidBy { get; set; }
         public string? Note { get; set; }
