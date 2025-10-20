@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using MassTransit;
+using WarrantyClaim.Application.Events;
 
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
 {
@@ -10,10 +13,20 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
         : ICommandHandler<UpdateSupplyPartCommand, UpdateSupplyPartResult>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly IMapper _mapper;
+        private readonly ILogger<UpdateSupplyPartHandler> _logger;
 
-        public UpdateSupplyPartHandler(IApplicationDbContext context)
+        public UpdateSupplyPartHandler(
+            IApplicationDbContext context,
+            IPublishEndpoint publishEndpoint,
+            IMapper mapper,
+            ILogger<UpdateSupplyPartHandler> logger)
         {
             _context = context;
+            _publishEndpoint = publishEndpoint;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<UpdateSupplyPartResult> Handle(
@@ -43,7 +56,34 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
                 partSupply.Status = parsed;
             }
 
+         
             await _context.SaveChangesAsync(cancellationToken);
+
+          
+            if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty)
+            {
+                try
+                {
+                    var vehiclePartUpdatedEvent = new VehiclePartUpdatedEvent
+                    {
+                        PartId = dto.PartId.Value,
+                        SerialNumber = dto.NewSerialNumber ?? string.Empty,
+                        Status = dto.Status ?? "Installed",
+                        Description = dto.Description,
+                        ShipmentCode = dto.ShipmentCode,
+                        ShipmentRef = dto.ShipmentRef,
+                      
+                    };
+
+                    await _publishEndpoint.Publish(vehiclePartUpdatedEvent, cancellationToken);
+                    _logger.LogInformation("Published VehiclePartUpdatedEvent for PartId {PartId}", dto.PartId.Value);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to publish VehiclePartUpdatedEvent for PartId {PartId}", dto.PartId.Value);
+                  
+                }
+            }
 
             return new UpdateSupplyPartResult(true);
         }

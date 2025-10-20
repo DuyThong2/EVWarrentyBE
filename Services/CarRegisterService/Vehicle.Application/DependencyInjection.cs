@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BuildingBlocks.Behaviors;
+using BuildingBlocks.Messaging.MassTransit;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,9 @@ namespace Vehicle.Application
 
             // Đăng ký AutoMapper
             services.AddAutoMapper(cfg => { }, typeof(CustomMapper));
+
+            // Enable MassTransit for event consumption
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
             return services;
         }

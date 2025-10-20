@@ -1,0 +1,50 @@
+### Test Event-Driven Vehicle Part Update via ApiGateway
+### ApiGateway URL: https://localhost:7001
+### RabbitMQ Management: http://localhost:15672 (guest/guest)
+
+### Step 1: Check ApiGateway health
+GET https://localhost:7001/healthz
+
+### Step 2: Check ApiGateway environment info
+GET https://localhost:7001/_gw/env
+
+### Step 3: Create a SupplyPart for testing (via ApiGateway)
+POST https://localhost:7001/api/SupplyParts
+Content-Type: application/json
+
+{
+  "claimItemId": "{{$guid}}",
+  "partId": "{{$guid}}",
+  "description": "Test Part for Event Testing via ApiGateway",
+  "newSerialNumber": "TEST-SERIAL-GATEWAY-001",
+  "shipmentCode": "SHIP-GW-001",
+  "shipmentRef": "REF-GW-001",
+  "status": "Installed"
+}
+
+### Step 4: Update the SupplyPart to trigger event (via ApiGateway)
+PUT https://localhost:7001/api/SupplyParts/{{supplyPartId}}
+Content-Type: application/json
+
+{
+  "id": "{{supplyPartId}}",
+  "claimItemId": "{{$guid}}",
+  "partId": "{{$guid}}",
+  "description": "Updated Test Part - Event Triggered via ApiGateway",
+  "newSerialNumber": "UPDATED-SERIAL-GW-002",
+  "shipmentCode": "SHIP-GW-002",
+  "shipmentRef": "REF-GW-002",
+  "status": "Installed"
+}
+
+### Step 5: Check VehiclePart via ApiGateway
+GET https://localhost:7001/api/VehicleParts/{{partId}}
+
+### Step 6: Check Swagger UI via ApiGateway
+GET https://localhost:7001/swagger
+
+### Step 7: Monitor RabbitMQ Management UI
+### Go to: http://localhost:15672
+### Login: guest/guest
+### Check "Queues" tab for message flow
+### Check "Exchanges" tab for event routing

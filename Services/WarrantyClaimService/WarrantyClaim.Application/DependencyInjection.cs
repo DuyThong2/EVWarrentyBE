@@ -24,6 +24,9 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddAutoMapper(cfg => { }, typeof(CustomMapper));
 
+        // Enable MassTransit for event publishing
+        services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
+
         //services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
         return services;
