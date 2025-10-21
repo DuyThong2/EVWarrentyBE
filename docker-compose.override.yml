@@ -106,10 +106,16 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=userdb,1433;Database=UserDb;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - MessageBrokerSettings__Host=amqp://evwarranty-mq:5672
+      - MessageBrokerSettings__UserName=guest
+      - MessageBrokerSettings__Password=guest
     ports:
       - "7090:8080"
       - "7099:8081"
     depends_on:
+      messagebroker:
+        condition: service_healthy
+
       userdb:
         condition: service_healthy
     volumes:

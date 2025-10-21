@@ -17,6 +17,7 @@ using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
 using EVWUser.Business.AutoMapper;
 using EVWUser.Data;
+using BuildingBlocks.Messaging.MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,8 @@ builder.Services.AddEmailSender(
     password: "bjzi qbqv cokr utsv");
 
 // Configuration
+
+builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddEnvironmentVariables();
