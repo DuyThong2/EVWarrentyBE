@@ -1,5 +1,7 @@
 using BuildingBlocks.Exceptions.Handler;
+using MassTransit;
 using Microsoft.OpenApi.Models;
+using PartCatalog.Application.Consumers;
 
 namespace PartCatalog.API
 {
@@ -18,6 +20,8 @@ namespace PartCatalog.API
 
 
             services.AddExceptionHandler<CustomExceptionHandler>();
+
+            
 
 
             return services;
