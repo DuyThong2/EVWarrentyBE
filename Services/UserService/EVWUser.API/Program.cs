@@ -61,7 +61,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx =>
+            {
+                ctx.Response.StatusCode = 401;
+                ctx.Response.ContentType = "application/json";
+                return ctx.Response.WriteAsync("{\"status\":401,\"message\":\"Unauthorized: Invalid token\"}");
+            },
+            OnChallenge = ctx =>
+            {
+                ctx.HandleResponse();
+                ctx.Response.StatusCode = 401;
+                ctx.Response.ContentType = "application/json";
+                return ctx.Response.WriteAsync("{\"status\":401,\"message\":\"Unauthorized: Token is missing or expired\"}");
+            },
+            OnForbidden = ctx =>
+            {
+                ctx.Response.StatusCode = 403;
+                ctx.Response.ContentType = "application/json";
+                return ctx.Response.WriteAsync("{\"status\":403,\"message\":\"Forbidden: You don't have permission to access this resource\"}");
+            }
         };
     });
 
@@ -79,16 +103,36 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>{
-    c.SwaggerDoc("v1", new OpenApiInfo
+builder.Services.AddSwaggerGen(options =>
+{
+    // XML docs
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        options.IncludeXmlComments(xmlPath, true);
+
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Title = "EVW User API",
-        Version = "v1"
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter token: Bearer {your JWT token}"
     });
 
-    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    //c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 // CORS
