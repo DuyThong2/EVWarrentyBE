@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using BuildingBlocks.Messaging.Events;
+using MassTransit;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
 using PartCatalog.Applications.UpdatePackage;
@@ -8,10 +10,12 @@ namespace PartCatalog.Application.Features.Packages.Handlers
     public class UpdatePackageHandler : IRequestHandler<UpdatePackageCommand, UpdatePackageResult>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public UpdatePackageHandler(IApplicationDbContext context)
+        public UpdatePackageHandler(IApplicationDbContext context, IPublishEndpoint publishEndpoint)
         {
             _context = context;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<UpdatePackageResult> Handle(UpdatePackageCommand request, CancellationToken cancellationToken)
@@ -25,6 +29,8 @@ namespace PartCatalog.Application.Features.Packages.Handlers
             {
                 return new UpdatePackageResult(false, "Package not found.");
             }
+
+            var oldQuantity = entity.Quantity;
 
             // Update fields
             entity.PackageCode = dto.PackageCode;
@@ -48,6 +54,18 @@ namespace PartCatalog.Application.Features.Packages.Handlers
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            // Nếu Quantity thay đổi, publish event fanout
+            if (entity.Quantity != oldQuantity)
+            {
+                var quantityChangedEvent = new PackageQuantityChangedEvent(
+                    entity.PackageId,
+                    oldQuantity,
+                    entity.Quantity
+                );
+
+                await _publishEndpoint.Publish(quantityChangedEvent, cancellationToken);
+            }
 
             return new UpdatePackageResult(true, "Package updated successfully.");
         }

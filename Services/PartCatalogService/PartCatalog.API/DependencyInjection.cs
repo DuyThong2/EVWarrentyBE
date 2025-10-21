@@ -1,5 +1,7 @@
 using BuildingBlocks.Exceptions.Handler;
+using MassTransit;
 using Microsoft.OpenApi.Models;
+using PartCatalog.Application.Consumers;
 
 namespace PartCatalog.API
 {
@@ -18,6 +20,25 @@ namespace PartCatalog.API
 
 
             services.AddExceptionHandler<CustomExceptionHandler>();
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<PartSupplyStatusChangedConsumer>();
+
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(configuration["RabbitMQ:Host"], h =>
+                    {
+                        h.Username(configuration["RabbitMQ:Username"]);
+                        h.Password(configuration["RabbitMQ:Password"]);
+                    });
+
+                    cfg.ReceiveEndpoint("part-supply-status-changed", e =>
+                    {
+                        e.ConfigureConsumer<PartSupplyStatusChangedConsumer>(context);
+                    });
+                });
+            });
 
 
             return services;
