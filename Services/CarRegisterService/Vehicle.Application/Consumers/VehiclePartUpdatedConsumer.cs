@@ -1,7 +1,8 @@
+using BuildingBlocks.Messaging.Events;
 using MassTransit;
 using Vehicle.Application.Repositories;
 using Vehicle.Domain.Enums;
-using Vehicle.Application.Events;
+
 
 namespace Vehicle.Application.Consumers
 {

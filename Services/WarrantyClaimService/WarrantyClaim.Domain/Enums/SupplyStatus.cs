@@ -11,7 +11,8 @@ namespace WarrantyClaim.Domain.Enums
         REQUESTED = 0,
         SHIPPED = 1,
         CANCELED = 2,
-        DELIVERED = 3
+        DELIVERED = 3,
+        INSTALLED = 4,
         
     }
 }

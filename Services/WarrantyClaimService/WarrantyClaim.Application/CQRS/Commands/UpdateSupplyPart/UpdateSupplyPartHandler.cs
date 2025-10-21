@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using BuildingBlocks.Messaging.Events;
 using MassTransit;
-using WarrantyClaim.Application.Events;
 
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
 {

@@ -37,6 +37,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateSupplyPart
                 Id = Guid.NewGuid(),
                 ClaimItemId = dto.ClaimItemId,
                 PartId = dto.PartId,
+                OldPartSerialNumber = dto.OldSerialNumber,
                 Description = dto.Description,
                 NewSerialNumber = dto.NewSerialNumber,
                 ShipmentCode = dto.ShipmentCode,

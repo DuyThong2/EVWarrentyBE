@@ -1,6 +1,5 @@
-using BuildingBlocks.Messaging.Events;
 
-namespace Vehicle.Application.Events
+namespace BuildingBlocks.Messaging.Events
 {
     public record VehiclePartUpdatedEvent : IntegrationEvent
     {
