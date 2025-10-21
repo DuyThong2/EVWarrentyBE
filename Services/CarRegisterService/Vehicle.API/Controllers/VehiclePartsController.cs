@@ -1,6 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BuildingBlocks.Pagination;
+using BuildingBlocks.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -34,25 +35,56 @@ namespace Vehicle.API.Controllers
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            var page = await _repository.GetPagedAsync(pageIndex, pageSize, cancellationToken);
-            var data = page.Data.Select(e => _mapper.Map<VehiclePartDto>(e));
-            var result = new PaginatedResult<VehiclePartDto>(page.PageIndex, page.PageSize, page.Count, data);
-            return Ok(result);
+            try
+            {
+                if (pageIndex < 1)
+                    throw new BadRequestException("Page index must be greater than 0");
+                if (pageSize < 1 || pageSize > 100)
+                    throw new BadRequestException("Page size must be between 1 and 100");
+
+                var page = await _repository.GetPagedAsync(pageIndex, pageSize, cancellationToken);
+                var data = page.Data.Select(e => _mapper.Map<VehiclePartDto>(e));
+                var result = new PaginatedResult<VehiclePartDto>(page.PageIndex, page.PageSize, page.Count, data);
+                return Ok(result);
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while retrieving vehicle parts", ex.Message);
+            }
         }
 
         // GET: /api/vehicleparts/{id}
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
-            if (id == Guid.Empty)
-                return BadRequest("Id is required.");
+            try
+            {
+                if (id == Guid.Empty)
+                    throw new BadRequestException("Vehicle part ID is required");
 
-            var entity = await _repository.GetByIdAsync(id, cancellationToken);
+                var entity = await _repository.GetByIdAsync(id, cancellationToken);
 
-            if (entity is null)
-                return NotFound();
+                if (entity is null)
+                    throw new NotFoundException("Vehicle part", id);
 
-            return Ok(_mapper.Map<VehiclePartDto>(entity));
+                return Ok(_mapper.Map<VehiclePartDto>(entity));
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while retrieving the vehicle part", ex.Message);
+            }
         }
 
         // GET: /api/vehicleparts/filter
@@ -63,10 +95,26 @@ namespace Vehicle.API.Controllers
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            var page = await _repository.FilterAsync(filter, pageIndex, pageSize, cancellationToken);
-            var data = page.Data.Select(e => _mapper.Map<VehiclePartDto>(e));
-            var result = new PaginatedResult<VehiclePartDto>(page.PageIndex, page.PageSize, page.Count, data);
-            return Ok(result);
+            try
+            {
+                if (pageIndex < 1)
+                    throw new BadRequestException("Page index must be greater than 0");
+                if (pageSize < 1 || pageSize > 100)
+                    throw new BadRequestException("Page size must be between 1 and 100");
+
+                var page = await _repository.FilterAsync(filter, pageIndex, pageSize, cancellationToken);
+                var data = page.Data.Select(e => _mapper.Map<VehiclePartDto>(e));
+                var result = new PaginatedResult<VehiclePartDto>(page.PageIndex, page.PageSize, page.Count, data);
+                return Ok(result);
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while filtering vehicle parts", ex.Message);
+            }
         }
 
         // POST: /api/vehicleparts
@@ -75,19 +123,30 @@ namespace Vehicle.API.Controllers
             [FromBody] CreateVehiclePartDto payload,
             CancellationToken cancellationToken = default)
         {
-            if (payload is null)
-                return BadRequest("Body is required.");
+            try
+            {
+                if (payload is null)
+                    throw new BadRequestException("Request body is required");
 
-            var entity = _mapper.Map<Vehicle.Domain.Models.VehiclePart>(payload);
-            entity.PartId = Guid.NewGuid();
+                var entity = _mapper.Map<Vehicle.Domain.Models.VehiclePart>(payload);
+                entity.PartId = Guid.NewGuid();
 
-            var id = await _repository.CreateAsync(entity, cancellationToken);
+                var id = await _repository.CreateAsync(entity, cancellationToken);
 
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = id },
-                new { id = id }
-            );
+                return CreatedAtAction(
+                    nameof(GetById),
+                    new { id = id },
+                    new { id = id }
+                );
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while creating the vehicle part", ex.Message);
+            }
         }
 
         // PUT: /api/vehicleparts/{id}
@@ -97,49 +156,97 @@ namespace Vehicle.API.Controllers
             [FromBody] VehiclePartDto payload,
             CancellationToken cancellationToken = default)
         {
-            if (id == Guid.Empty || payload is null)
-                return BadRequest();
+            try
+            {
+                if (id == Guid.Empty)
+                    throw new BadRequestException("Vehicle part ID is required");
+                if (payload is null)
+                    throw new BadRequestException("Request body is required");
 
-            var existing = await _repository.GetByIdAsync(id, cancellationToken);
-            if (existing is null)
-                return NotFound();
+                var existing = await _repository.GetByIdAsync(id, cancellationToken);
+                if (existing is null)
+                    throw new NotFoundException("Vehicle part", id);
 
-            _mapper.Map(payload, existing);
-            existing.PartId = id;
+                _mapper.Map(payload, existing);
+                existing.PartId = id;
 
-            await _repository.UpdateAsync(existing, cancellationToken);
-            return Ok(new { isUpdated = true });
+                await _repository.UpdateAsync(existing, cancellationToken);
+                return Ok(new { isUpdated = true });
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while updating the vehicle part", ex.Message);
+            }
         }
 
         // DELETE: /api/vehicleparts/{id}
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
         {
-            if (id == Guid.Empty)
-                return BadRequest();
+            try
+            {
+                if (id == Guid.Empty)
+                    throw new BadRequestException("Vehicle part ID is required");
 
-            var ok = await _repository.DeleteAsync(id, cancellationToken);
-            if (!ok)
-                return NotFound();
-            return Ok(new { isDeleted = true });
+                var ok = await _repository.DeleteAsync(id, cancellationToken);
+                if (!ok)
+                    throw new NotFoundException("Vehicle part", id);
+
+                return Ok(new { isDeleted = true });
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while deleting the vehicle part", ex.Message);
+            }
         }
 
         // PATCH: /api/vehicleparts/{id}/toggle-delete
         [HttpPatch("{id:guid}/toggle-delete")]
         public async Task<IActionResult> ToggleDelete(Guid id, CancellationToken cancellationToken = default)
         {
-            if (id == Guid.Empty)
-                return BadRequest();
+            try
+            {
+                if (id == Guid.Empty)
+                    throw new BadRequestException("Vehicle part ID is required");
 
-            var existing = await _repository.GetByIdAsync(id, cancellationToken);
-            if (existing is null)
-                return NotFound();
+                var existing = await _repository.GetByIdAsync(id, cancellationToken);
+                if (existing is null)
+                    throw new NotFoundException("Vehicle part", id);
 
-            var isDeleted = existing.Status == PartStatus.Scrapped || existing.Status.ToString() == "Deleted";
-            existing.Status = isDeleted ? PartStatus.Installed : PartStatus.Scrapped;
+                var isDeleted = existing.Status == PartStatus.Scrapped || existing.Status.ToString() == "Deleted";
+                existing.Status = isDeleted ? PartStatus.Installed : PartStatus.Scrapped;
 
-            await _repository.UpdateAsync(existing, cancellationToken);
-            return Ok(new { status = existing.Status.ToString() });
+                await _repository.UpdateAsync(existing, cancellationToken);
+                return Ok(new { status = existing.Status.ToString() });
+            }
+            catch (BadRequestException)
+            {
+                throw;
+            }
+            catch (NotFoundException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("An error occurred while toggling vehicle part delete status", ex.Message);
+            }
         }
     }
 }

@@ -180,6 +180,11 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("newSerialNumber");
 
+                    b.Property<string>("OldPartSerialNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("OldPartSerialNumber");
+
                     b.Property<Guid?>("PartId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("partId");
@@ -248,8 +253,10 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasColumnName("staffId");
 
                     b.Property<string>("Status")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("ACTIVE")
                         .HasColumnName("status");
 
                     b.HasKey("Id");

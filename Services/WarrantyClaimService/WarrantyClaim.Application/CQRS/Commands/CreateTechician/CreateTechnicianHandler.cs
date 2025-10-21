@@ -10,10 +10,12 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateTechician
         : ICommandHandler<CreateTechnicianCommand, CreateTechnicianResult>
     {
         private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CreateTechnicianHandler(IApplicationDbContext context)
+        public CreateTechnicianHandler(IApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<CreateTechnicianResult> Handle(
@@ -22,28 +24,14 @@ namespace WarrantyClaim.Application.CQRS.Commands.CreateTechician
         {
             var dto = request.Technician;
 
-            // Parse status string -> enum (default ACTIVE)
-            var status = dto.Status;
-            //if (!string.IsNullOrWhiteSpace(dto.Status) &&
-            //    Enum.TryParse<TechnicianStatus>(dto.Status, true, out var parsed))
-            //{
-            //    status = parsed;
-            //}
-
-            var technician = new Technician
-            {
-                Id = Guid.NewGuid(),
-                StaffId = dto.StaffId,
-                FullName = dto.FullName,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                Status = status
-            };
+            var technician = _mapper.Map<Technician>(dto);
+            technician.Id = Guid.NewGuid();
 
             _context.Technicians.Add(technician);
             await _context.SaveChangesAsync(cancellationToken);
 
             return new CreateTechnicianResult(technician.Id);
         }
-    }
+    
+}
 }

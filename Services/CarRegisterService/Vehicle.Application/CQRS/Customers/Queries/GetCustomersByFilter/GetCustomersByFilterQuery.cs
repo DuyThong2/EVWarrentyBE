@@ -14,11 +14,12 @@ namespace Vehicle.Application.CQRS.Customers.Queries.GetCustomersByFilter
         public Guid? CustomerId { get; set; }
         public string? FullName { get; set; }
         public string? Email { get; set; }
-        public string? PhoneNumber { get; set; }  // ← Thêm dòng này
+        public string? PhoneNumber { get; set; }
+        public string? Address { get; set; }
         public string? Status { get; set; }
     }
 
-    public enum SortBy { FullName, Email, CreatedAt, CustomerId }
+    public enum SortBy { FullName, Email, PhoneNumber, Address, CreatedAt, CustomerId }
     public enum SortDir { Asc, Desc }
 
     public record SortOption(SortBy By, SortDir Dir);

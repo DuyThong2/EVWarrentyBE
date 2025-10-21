@@ -28,9 +28,14 @@ public class CustomMapper : Profile
             .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items ?? new List<CreateClaimItemDto>()));
 
         // ===== Technician =====
-        CreateMap<Technician, TechnicianDto>();
+        CreateMap<Technician, TechnicianDto>()
+            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()));
+
+        // DTO → Entity
         CreateMap<TechnicianDto, Technician>()
-            .ForMember(d => d.WorkOrders, opt => opt.Ignore());
+            .ForMember(d => d.WorkOrders, opt => opt.Ignore())
+            .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                EnumParser.ParseOrDefault(s.Status, TechnicianStatus.ACTIVE)));
 
         // ===== WorkOrder =====
         CreateMap<WorkOrder, WorkOrderDto>()
@@ -54,7 +59,9 @@ public class CustomMapper : Profile
                 EnumParser.ParseOrDefault(s.ClaimType, ClaimType.WARRANT)))
             .ForMember(d => d.Status, opt => opt.MapFrom(s =>
                 EnumParser.ParseOrDefault(s.Status, ClaimStatus.SUBMITTED)))
-            .ForMember(d => d.Items, opt => opt.Ignore());
+            .ForMember(d => d.Items, opt => opt.Ignore())
+            .ForMember(d => d.FileURL, opt => opt.Ignore());
+        
 
         // ===== ClaimItem <-> ClaimItemDto =====
         CreateMap<ClaimItem, ClaimItemDto>()
@@ -66,10 +73,18 @@ public class CustomMapper : Profile
                 EnumParser.ParseOrDefault(s.Status, ClaimItemStatus.PENDING)))
             .ForMember(d => d.Claim, opt => opt.Ignore())
             .ForMember(d => d.WorkOrders, opt => opt.Ignore())
-            .ForMember(d => d.PartSupplies, opt => opt.Ignore());
+            .ForMember(d => d.PartSupplies, opt => opt.Ignore())
+            .ForMember(d => d.ImgURLs, opt => opt.Ignore());
 
 
         CreateMap<PartSupply, PartSupplyDto>();
+
+        CreateMap<UpdateClaimDto, Claim>()
+            .ForMember(d => d.Items, opt => opt.Ignore());
+
+        CreateMap<UpdateClaimItemDto, ClaimItem>()
+            .ForMember(d => d.WorkOrders, opt => opt.Ignore())
+            .ForMember(d => d.PartSupplies, opt => opt.Ignore());
 
     }
 

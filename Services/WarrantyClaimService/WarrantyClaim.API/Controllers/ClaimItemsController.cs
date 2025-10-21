@@ -56,7 +56,7 @@ namespace WarrantyClaim.API.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,
-            [FromBody] ClaimItemDto item,
+            [FromBody] UpdateClaimItemDto item,
             CancellationToken cancellationToken = default)
         {
             var result = await _sender.Send(new UpdateClaimItemCommand(item), cancellationToken);

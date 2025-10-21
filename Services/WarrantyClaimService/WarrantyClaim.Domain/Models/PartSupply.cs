@@ -11,6 +11,9 @@ namespace WarrantyClaim.Domain.Models
     {
         public Guid? ClaimItemId { get; set; }
         public Guid? PartId { get; set; }
+
+        public string? OldPartSerialNumber { get; set; }
+
         public string? Description { get; set; }
         public string? NewSerialNumber { get; set; } // varchar(100)
         public string? ShipmentCode { get; set; }    // varchar(50)

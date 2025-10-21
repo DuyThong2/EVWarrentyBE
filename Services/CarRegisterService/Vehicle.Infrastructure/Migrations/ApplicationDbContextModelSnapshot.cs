@@ -314,6 +314,76 @@ namespace Vehicle.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Vehicle.Domain.Models.WarrantyHistory", b =>
+                {
+                    b.Property<Guid>("HistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClaimId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("EventType")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("PartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PerformedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("PolicyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ServiceCenterName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("VehicleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("WarrantyEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("WarrantyStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("HistoryId");
+
+                    b.HasIndex("ClaimId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("EventType");
+
+                    b.HasIndex("PartId");
+
+                    b.HasIndex("PerformedBy");
+
+                    b.HasIndex("PolicyId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("WarrantyHistories");
+                });
+
             modelBuilder.Entity("Vehicle.Domain.Models.Vehicle", b =>
                 {
                     b.HasOne("Vehicle.Domain.Models.Customer", "Customer")
@@ -347,6 +417,24 @@ namespace Vehicle.Infrastructure.Migrations
                     b.Navigation("Vehicle");
                 });
 
+            modelBuilder.Entity("Vehicle.Domain.Models.WarrantyHistory", b =>
+                {
+                    b.HasOne("Vehicle.Domain.Models.VehiclePart", "Part")
+                        .WithMany("WarrantyHistories")
+                        .HasForeignKey("PartId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Vehicle.Domain.Models.Vehicle", "Vehicle")
+                        .WithMany("WarrantyHistories")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Part");
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("Vehicle.Domain.Models.Customer", b =>
                 {
                     b.Navigation("Vehicles");
@@ -357,6 +445,13 @@ namespace Vehicle.Infrastructure.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("Parts");
+
+                    b.Navigation("WarrantyHistories");
+                });
+
+            modelBuilder.Entity("Vehicle.Domain.Models.VehiclePart", b =>
+                {
+                    b.Navigation("WarrantyHistories");
                 });
 #pragma warning restore 612, 618
         }

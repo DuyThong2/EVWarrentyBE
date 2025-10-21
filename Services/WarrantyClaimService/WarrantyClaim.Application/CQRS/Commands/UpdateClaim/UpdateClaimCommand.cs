@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaim
 {
     public record UpdateClaimCommand(
-    ClaimDto Claim,                  // đổi sang ClaimDto để có Id
-    bool ReplaceAllItems = false
-) : ICommand<UpdateClaimResult>;
+        UpdateClaimDto Claim,                  // đổi sang ClaimDto để có Id
+        bool ReplaceAllItems = false
+    ) : ICommand<UpdateClaimResult>;
 
     public record UpdateClaimResult(bool IsUpdated);
 
@@ -39,7 +39,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateClaim
         }
     }
 
-    public class ClaimItemDtoValidator : AbstractValidator<ClaimItemDto>
+    public class ClaimItemDtoValidator : AbstractValidator<UpdateClaimItemDto>
     {
         public ClaimItemDtoValidator()
         {
