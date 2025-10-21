@@ -1,6 +1,8 @@
-﻿using BuildingBlocks.Pagination;
-using EVWUser.API.Dtos;
-using EVWUser.API.Services;
+﻿using BuildingBlocks.Authorization;
+using BuildingBlocks.Pagination;
+using EVWUser.Business.Dtos;
+using EVWUser.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVWUser.API.Controllers
@@ -33,9 +35,18 @@ namespace EVWUser.API.Controllers
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index, [FromQuery] int pageSize)
+        public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index = 1, [FromQuery] int pageSize= 10)
         {
-            var users = await _userService.SearchAsync(roleId, email, new PaginationRequest(index, pageSize));
+
+            var normalizedIndex = index < 1 ? 0 : index - 1;     // về 0-based
+            var normalizedSize = pageSize <= 0 ? 10 : pageSize; // chặn 0 hoặc âm
+
+            var users = await _userService.SearchAsync(
+                roleId,
+                email,
+                new PaginationRequest(normalizedIndex, normalizedSize)
+            );
+
             return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users retrieved successfully"));
         }
 

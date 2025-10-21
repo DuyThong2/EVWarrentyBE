@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
-using EVWUser.API.Dtos;
-using EVWUser.API.Services;
+using EVWUser.Business.Dtos;
+using EVWUser.Business.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

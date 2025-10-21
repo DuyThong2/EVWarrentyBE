@@ -1,14 +1,11 @@
 ﻿using BuildingBlocks.Behaviors;
 using BuildingBlocks.Email;
 using BuildingBlocks.Exceptions.Handler;
-using EVWUser.API.Data;
-using EVWUser.API.Data.Extensions;
-using EVWUser.API.Extensions.AutoMapper;
-using EVWUser.API.Extensions.Jwt;
-using EVWUser.API.Repositories;
-using EVWUser.API.Repositories.Impl;
-using EVWUser.API.Services;
-using EVWUser.API.Services.Impl;
+using EVWUser.API.Extensions;
+using EVWUser.Data.Repositories;
+using EVWUser.Data.Repositories.Impl;
+using EVWUser.Business.Services;
+using EVWUser.Business.Services.Impl;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +15,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static System.Net.Mime.MediaTypeNames;
+using EVWUser.Business.AutoMapper;
+using EVWUser.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,9 +83,9 @@ builder.Services.AddSwaggerGen(c =>{
         Version = "v1"
     });
 
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+    //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    //c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
 });
 
 // CORS
@@ -122,22 +121,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 //app.UseExceptionHandler();
-app.UseCors("CorsPolicy");
+//app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Swagger middleware
-app.UseSwagger(c =>
-{
-    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-    {
-        swaggerDoc.Servers = new List<OpenApiServer>
-        {
-            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
-        };
-    });
-});
+app.UseSwagger(
+//    c =>
+//{
+//    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+//    {
+//        swaggerDoc.Servers = new List<OpenApiServer>
+//        {
+//            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
+//        };
+//    });
+//}
+
+);
 
 
 app.UseSwaggerUI(c =>

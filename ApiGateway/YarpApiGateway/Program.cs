@@ -1,10 +1,15 @@
-using System.Diagnostics;
-using System.Net.Sockets;
-using System.Net;
-using System.Text.Json;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.Json;
+using YarpApiGateway.Middleware;
 using YarpApiGatway.Settings;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,7 +48,29 @@ builder.Services.AddRateLimiter(options =>
     });
 });
 
+// JWT Authentication
+var jwtSection = builder.Configuration.GetSection("Jwt");
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSection["Issuer"],
+            ValidAudience = jwtSection["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSection["SecretKey"] ?? ""))
+        };
+    });
 
+
+builder.Services.AddAuthorization();
 
 
 
@@ -73,6 +100,10 @@ app.UseRateLimiter();
 // Routing + Metrics endpoint
 app.UseRouting();
 
+// Authentication + Authorization
+app.UseAuthentication();
+app.UseMiddleware<RoleAuthorizationMiddleware>(); 
+app.UseAuthorization();
 
 
 app.MapReverseProxy();
