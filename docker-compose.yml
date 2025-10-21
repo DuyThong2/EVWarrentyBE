@@ -1,9 +1,15 @@
 services:
 
   messagebroker:
-    image: rabbitmq
- 
-  
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq  
 
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
@@ -46,4 +52,7 @@ services:
     build:
       context: .
       dockerfile: Services/UserService/EVWUser.API/Dockerfile
+
+volumes:
+  rabbitmq_data:
 

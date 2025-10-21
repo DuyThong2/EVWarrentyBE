@@ -1,0 +1,49 @@
+### Test Event-Driven Vehicle Part Update via Docker ApiGateway
+### ApiGateway URL: http://localhost:8387
+### RabbitMQ Management: http://localhost:15672 (guest/guest)
+
+### Step 1: Check ApiGateway health
+GET http://localhost:8387/healthz
+
+### Step 2: Check ApiGateway environment info
+GET http://localhost:8387/_gw/env
+
+### Step 3: Create a SupplyPart for testing (via Docker ApiGateway)
+POST http://localhost:8387/api/SupplyParts
+Content-Type: application/json
+
+{
+  "claimItemId": "{{$guid}}",
+  "partId": "{{$guid}}",
+  "description": "Test Part for Event Testing via Docker ApiGateway",
+  "newSerialNumber": "TEST-SERIAL-DOCKER-001",
+  "shipmentCode": "SHIP-DOCKER-001",
+  "shipmentRef": "REF-DOCKER-001",
+  "status": "Installed"
+}
+
+### Step 4: Update the SupplyPart to trigger event (via Docker ApiGateway)
+PUT http://localhost:8387/api/SupplyParts/{{supplyPartId}}
+Content-Type: application/json
+
+{
+  "id": "{{supplyPartId}}",
+  "claimItemId": "{{$guid}}",
+  "partId": "{{$guid}}",
+  "description": "Updated Test Part - Event Triggered via Docker ApiGateway",
+  "newSerialNumber": "UPDATED-SERIAL-DOCKER-002",
+  "shipmentCode": "SHIP-DOCKER-002",
+  "shipmentRef": "REF-DOCKER-002",
+  "status": "Installed"
+}
+
+### Step 5: Check VehiclePart via Docker ApiGateway
+GET http://localhost:8387/api/VehicleParts/{{partId}}
+
+### Step 6: Direct access to services (bypass ApiGateway)
+### WarrantyClaimService: http://localhost:8004/swagger
+### PartCatalogService: http://localhost:7071/swagger
+
+### Step 7: Monitor RabbitMQ Management UI
+### Go to: http://localhost:15672
+### Login: guest/guest

@@ -12,7 +12,14 @@ services:
     restart: always
     ports:
       - "5672:5672"      
-      - "15672:15672"    
+      - "15672:15672"  
+      
+    healthcheck:
+        test: ["CMD", "rabbitmq-diagnostics", "-q", "check_port_connectivity"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
+        start_period: 10s 
 
   # API Gateway (YARP)
   yarpapigateway:
@@ -59,12 +66,17 @@ services:
       - AWSOPTIONS__KEYPREFIX=${AWS__KEYPREFIX}
       - AWSOPTIONS__ACCESSKEY=${AWS__ACCESSKEY}
       - AWSOPTIONS__SECRETKEY=${AWS__SECRETKEY}
+      - MessageBrokerSettings__Host=amqp://evwarranty-mq:5672
+      - MessageBrokerSettings__UserName=guest
+      - MessageBrokerSettings__Password=guest
     ports:
       - "8004:8080"
       - "8084:8081"
     depends_on:
+      messagebroker:
+          condition: service_healthy
       claimdb:
-        condition: service_healthy
+          condition: service_healthy
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
@@ -130,10 +142,15 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__DefaultConnection=Server=vehicledb,1433;Database=VehicleDB;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - MessageBrokerSettings__Host=amqp://evwarranty-mq:5672
+      - MessageBrokerSettings__UserName=guest
+      - MessageBrokerSettings__Password=guest
     ports:
       - "4949:8080"
       - "4950:8081"
     depends_on:
+      messagebroker:
+        condition: service_healthy
       vehicledb:
         condition: service_healthy
     volumes:
@@ -168,10 +185,15 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=partdb,1433;Database=PartCatalogDb;User Id=sa;Password=12345678Aa;Encrypt=False;TrustServerCertificate=True
+      - MessageBrokerSettings__Host=amqp://evwarranty-mq:5672
+      - MessageBrokerSettings__UserName=guest
+      - MessageBrokerSettings__Password=guest
     ports:
       - "7071:8080"
       - "7070:8081"
     depends_on:
+      messagebroker:
+        condition: service_healthy
       partdb:
         condition: service_healthy
     volumes:
