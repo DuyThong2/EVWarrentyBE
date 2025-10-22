@@ -136,16 +136,16 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 // CORS
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("CorsPolicy", policyBuilder =>
-//    {
-//        policyBuilder
-//            .AllowAnyOrigin()
-//            .AllowAnyMethod()
-//            .AllowAnyHeader();
-//    });
-//});
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policyBuilder =>
+    {
+        policyBuilder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 builder.Services.AddAuthorization();
 
