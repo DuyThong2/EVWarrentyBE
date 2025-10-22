@@ -83,8 +83,6 @@ namespace Vehicle.Infrastructure.Repositories
             if (filter.ClaimId.HasValue)
                 query = query.Where(w => w.ClaimId == filter.ClaimId.Value);
 
-            if (filter.PolicyId.HasValue)
-                query = query.Where(w => w.PolicyId == filter.PolicyId.Value);
 
             if (!string.IsNullOrEmpty(filter.EventType))
             {
@@ -98,8 +96,6 @@ namespace Vehicle.Infrastructure.Repositories
             if (filter.PerformedBy.HasValue)
                 query = query.Where(w => w.PerformedBy == filter.PerformedBy.Value);
 
-            if (!string.IsNullOrEmpty(filter.ServiceCenterName))
-                query = query.Where(w => w.ServiceCenterName != null && w.ServiceCenterName.Contains(filter.ServiceCenterName));
 
             if (!string.IsNullOrEmpty(filter.Status))
             {

@@ -204,13 +204,12 @@ namespace Vehicle.API.Controllers
                     VehicleId = payload.VehicleId,
                     PartId = payload.PartId,
                     ClaimId = payload.ClaimId,
-                    PolicyId = payload.PolicyId,
                     EventType = eventType,
                     Description = payload.Description,
                     PerformedBy = payload.PerformedBy,
-                    ServiceCenterName = payload.ServiceCenterName,
                     WarrantyStartDate = payload.WarrantyStartDate,
                     WarrantyEndDate = payload.WarrantyEndDate,
+                    WarrantyDistance = payload.WarrantyDistance,
                     Status = status,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -269,13 +268,12 @@ namespace Vehicle.API.Controllers
 
                 existing.PartId = payload.PartId;
                 existing.ClaimId = payload.ClaimId;
-                existing.PolicyId = payload.PolicyId;
                 existing.EventType = eventType;
                 existing.Description = payload.Description;
                 existing.PerformedBy = payload.PerformedBy;
-                existing.ServiceCenterName = payload.ServiceCenterName;
                 existing.WarrantyStartDate = payload.WarrantyStartDate;
                 existing.WarrantyEndDate = payload.WarrantyEndDate;
+                existing.WarrantyDistance = payload.WarrantyDistance;
                 existing.Status = status;
                 existing.UpdatedAt = DateTime.UtcNow;
 

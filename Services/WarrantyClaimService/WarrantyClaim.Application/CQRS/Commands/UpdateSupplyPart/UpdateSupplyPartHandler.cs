@@ -47,6 +47,7 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
             partSupply.PartId = dto.PartId;
             partSupply.Description = dto.Description;
             partSupply.NewSerialNumber = dto.NewSerialNumber;
+            partSupply.OldPartSerialNumber = dto.OldPartSerialNumber; // Thêm field mới
             partSupply.ShipmentCode = dto.ShipmentCode;
             partSupply.ShipmentRef = dto.ShipmentRef;
 
@@ -59,30 +60,42 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
          
             await _context.SaveChangesAsync(cancellationToken);
 
-          
-            if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty)
+            // Publish integration event ONLY when Status is "INSTALLED" and PartId is provided
+            if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty && 
+                !string.IsNullOrWhiteSpace(dto.Status) && dto.Status.Equals("INSTALLED", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
+                    // Lấy thông tin Claim và StaffId từ ClaimItem
+                    var claimItem = await _context.ClaimItems
+                        .Include(ci => ci.Claim)
+                        .FirstOrDefaultAsync(ci => ci.Id == dto.ClaimItemId, cancellationToken);
+
                     var vehiclePartUpdatedEvent = new VehiclePartUpdatedEvent
                     {
                         PartId = dto.PartId.Value,
                         SerialNumber = dto.NewSerialNumber ?? string.Empty,
-                        Status = dto.Status ?? "Installed",
+                        OldPartSerialNumber = dto.OldPartSerialNumber,
+                        Status = "INSTALLED", // Force status to INSTALLED
                         Description = dto.Description,
                         ShipmentCode = dto.ShipmentCode,
                         ShipmentRef = dto.ShipmentRef,
-                      
+                        ClaimId = claimItem?.Claim?.Id,
+                        PerformedBy = claimItem?.Claim?.StaffId
                     };
 
                     await _publishEndpoint.Publish(vehiclePartUpdatedEvent, cancellationToken);
-                    _logger.LogInformation("Published VehiclePartUpdatedEvent for PartId {PartId}", dto.PartId.Value);
+                    _logger.LogInformation("Published VehiclePartUpdatedEvent for PartId {PartId} with INSTALLED status", dto.PartId.Value);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to publish VehiclePartUpdatedEvent for PartId {PartId}", dto.PartId.Value);
-                  
                 }
+            }
+            else if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty)
+            {
+                _logger.LogInformation("SupplyPart {PartId} updated but status is not INSTALLED, skipping event publish. Current status: {Status}", 
+                    dto.PartId.Value, dto.Status);
             }
 
             return new UpdateSupplyPartResult(true);
