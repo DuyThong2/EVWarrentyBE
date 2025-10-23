@@ -2,12 +2,11 @@
 using MassTransit;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using BuildingBlocks.Messaging.Events;
-using MassTransit;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
 {
@@ -44,8 +43,6 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
             if (partSupply is null)
                 throw new KeyNotFoundException($"PartSupply {dto.Id} not found.");
 
-            var oldStatus = partSupply.Status;
-
             // Update scalar fields
             partSupply.ClaimItemId = dto.ClaimItemId;
             partSupply.PartId = dto.PartId;
@@ -55,34 +52,18 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
             partSupply.ShipmentCode = dto.ShipmentCode;
             partSupply.ShipmentRef = dto.ShipmentRef;
 
+            // Parse status nếu có
             if (!string.IsNullOrWhiteSpace(dto.Status) &&
                 Enum.TryParse<SupplyStatus>(dto.Status, true, out var parsed))
             {
                 partSupply.Status = parsed;
             }
 
-         
             await _context.SaveChangesAsync(cancellationToken);
 
-<<<<<<< HEAD
-            // Publish integration event ONLY when Status is "INSTALLED" and PartId is provided
-            if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty && 
-                !string.IsNullOrWhiteSpace(dto.Status) && dto.Status.Equals("INSTALLED", StringComparison.OrdinalIgnoreCase))
-=======
-            // Publish event nếu Status thay đổi
-            if (partSupply.Status != oldStatus)
-            {
-                var @event = new PartSupplyStatusChangedEvent(
-                    partSupply.PartId.Value,
-                    partSupply.Status.ToString()
-                );
-
-                await _publishEndpoint.Publish(@event, cancellationToken);
-            }
-
-            
-            if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty)
->>>>>>> dev
+            // ✅ Chỉ publish khi Status = INSTALLED và có PartId
+            if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty &&
+                partSupply.Status == SupplyStatus.INSTALLED)
             {
                 try
                 {
@@ -105,17 +86,17 @@ namespace WarrantyClaim.Application.CQRS.Commands.UpdateSupplyPart
                     };
 
                     await _publishEndpoint.Publish(vehiclePartUpdatedEvent, cancellationToken);
-                    _logger.LogInformation("Published VehiclePartUpdatedEvent for PartId {PartId} with INSTALLED status", dto.PartId.Value);
+                    _logger.LogInformation("✅ Published VehiclePartUpdatedEvent for PartId {PartId} with INSTALLED status", dto.PartId.Value);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to publish VehiclePartUpdatedEvent for PartId {PartId}", dto.PartId.Value);
+                    _logger.LogError(ex, "❌ Failed to publish VehiclePartUpdatedEvent for PartId {PartId}", dto.PartId.Value);
                 }
             }
-            else if (dto.PartId.HasValue && dto.PartId.Value != Guid.Empty)
+            else
             {
-                _logger.LogInformation("SupplyPart {PartId} updated but status is not INSTALLED, skipping event publish. Current status: {Status}", 
-                    dto.PartId.Value, dto.Status);
+                _logger.LogInformation("ℹ️ SupplyPart {PartId} updated but status is not INSTALLED. Skipped event publish. Current status: {Status}",
+                    dto.PartId.Value, partSupply.Status);
             }
 
             return new UpdateSupplyPartResult(true);
