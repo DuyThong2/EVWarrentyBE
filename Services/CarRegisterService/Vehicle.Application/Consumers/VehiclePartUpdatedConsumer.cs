@@ -81,7 +81,7 @@ namespace Vehicle.Application.Consumers
                     VehicleId = oldPart.VehicleId,
                     PartId = oldPart.PartId,
                     ClaimId = message.ClaimId,
-                    EventType = WarrantyEventType.PartReplacement,
+                    EventType = WarrantyEventType.REPLACEMENT,
                     Description = $"Part replaced: {oldPart.SerialNumber} -> {message.SerialNumber}",
                     PerformedBy = message.PerformedBy,
                     WarrantyStartDate = oldPart.WarrantyStartDate,
@@ -92,7 +92,7 @@ namespace Vehicle.Application.Consumers
                     Status = WarrantyHistoryStatus.Completed
                 };
 
-                await _warrantyHistoryRepository.CreateAsync(warrantyHistory, cancellationToken);
+                await _warrantyHistoryRepository.AddAsync(warrantyHistory, cancellationToken);
                 _logger.LogInformation("Saved old part {OldSerial} to warranty history for PartId {PartId}", 
                     oldPart.SerialNumber, message.PartId);
             }
