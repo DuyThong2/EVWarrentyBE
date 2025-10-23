@@ -10,6 +10,8 @@ namespace WarrantyClaim.Application.Dtos
     {
         public Guid Id { get; set; }
         public Guid ClaimId { get; set; }
+
+        public string ? VIN { get; set; }
         public string? PartSerialNumber { get; set; }
         public decimal? PayAmount { get; set; }
         public string? PaidBy { get; set; }

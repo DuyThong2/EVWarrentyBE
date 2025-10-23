@@ -22,7 +22,7 @@ namespace WarrantyClaim.Application.Extension
             var list = new List<FileRefDto>();
             if (string.IsNullOrWhiteSpace(jsonOrCsv)) return list;
 
-            // 1) JSON of FileRefDto
+            // 1) JSON of FileRefDto  ✅ GIỮ ĐẦY ĐỦ METADATA
             try
             {
                 var objs = JsonSerializer.Deserialize<List<FileRefDto>>(jsonOrCsv, _json);
@@ -30,17 +30,31 @@ namespace WarrantyClaim.Application.Extension
                 {
                     foreach (var o in objs)
                     {
-                        var key = o?.Key?.Trim();
-                        var url = StripQuery(o?.Url);
-                        if (!string.IsNullOrWhiteSpace(key) || !string.IsNullOrWhiteSpace(url))
-                            list.Add(new FileRefDto { Key = key, Url = url });
+                        if (o is null) continue;
+
+                        var key = o.Key?.Trim();
+                        var url = StripQuery(o.Url);
+
+                        // nếu cả key & url đều trống thì bỏ
+                        if (string.IsNullOrWhiteSpace(key) && string.IsNullOrWhiteSpace(url))
+                            continue;
+
+                        list.Add(new FileRefDto
+                        {
+                            Key = key,
+                            Url = url,
+                            Name = string.IsNullOrWhiteSpace(o.Name) ? null : o.Name!.Trim(),
+                            Size = o.Size,
+                            ContentType = string.IsNullOrWhiteSpace(o.ContentType) ? null : o.ContentType!.Trim(),
+                            UploadedAtUtc = o.UploadedAtUtc
+                        });
                     }
                 }
                 if (list.Count > 0) return Distinct(list);
             }
             catch { /* ignore */ }
 
-            // 2) JSON of string[]
+            // 2) JSON of string[] (chỉ có Url)
             try
             {
                 var arr = JsonSerializer.Deserialize<List<string>>(jsonOrCsv, _json);
@@ -53,12 +67,13 @@ namespace WarrantyClaim.Application.Extension
             }
             catch { /* ignore */ }
 
-            // 3) CSV
+            // 3) CSV (chỉ có Url)
             foreach (var u in jsonOrCsv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
                 list.Add(new FileRefDto { Url = StripQuery(u) });
 
             return Distinct(list);
         }
+
 
         /// <summary>Serialize về JSON chuẩn [{key,url}] để lưu DB</summary>
         public static string ToJson(List<FileRefDto> refs) =>

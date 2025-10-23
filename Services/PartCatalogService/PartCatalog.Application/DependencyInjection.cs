@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Behaviors;
+using BuildingBlocks.Messaging.MassTransit;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +24,7 @@ namespace PartCatalog.Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.AddAutoMapper(cfg => { }, typeof(CustomMapper));
-            //services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
 
             return services;
         }

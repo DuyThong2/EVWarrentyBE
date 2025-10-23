@@ -141,6 +141,11 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasDefaultValue("PENDING")
                         .HasColumnName("status");
 
+                    b.Property<string>("VIN")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("VIN");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClaimId");
