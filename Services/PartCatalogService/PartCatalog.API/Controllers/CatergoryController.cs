@@ -5,6 +5,7 @@ using PartCatalog.Application.CQRS.Commands.DeleteCategory;
 using PartCatalog.Application.CQRS.Commands.UpdateCategory;
 using PartCatalog.Application.CQRS.Queries.GetCategoryById;
 using PartCatalog.Application.DTOs;
+using PartCatalog.Application.CQRS.Queries.GetCategoryByFilter;
 
 namespace PartCatalog.API.Controllers
 {
@@ -49,6 +50,31 @@ namespace PartCatalog.API.Controllers
             {
                 return NotFound($"Category with id {id} not found.");
             }
+        }
+
+        // ===== FILTER =====
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetByFilter(
+            [FromQuery] string? cateCode,
+            [FromQuery] string? cateName,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _sender.Send(new GetCategoryByFilterQuery(cateCode, cateName, pageIndex, pageSize), cancellationToken);
+
+            var response = new
+            {
+                Result = result.Categories,
+                Raw = result.Categories.Data.Select(c => new
+                {
+                    c.CateId,
+                    c.CateCode,
+                    c.CateName
+                })
+            };
+
+            return Ok(response);
         }
 
         // ===== UPDATE =====

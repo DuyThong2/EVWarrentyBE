@@ -32,10 +32,14 @@ public class CustomMapper : Profile
                 s.Status == null
                     ? ActiveStatus.ACTIVE   // fallback mặc định
                     : ParseEnumOrDefault(s.Status, ActiveStatus.ACTIVE)))
-            .ForMember(d => d.CateId, opt => opt.MapFrom(s => 
-                string.IsNullOrWhiteSpace(s.CategoryId) 
-                    ? (Guid?)null 
+            .ForMember(d => d.CateId, opt => opt.MapFrom(s =>
+                string.IsNullOrWhiteSpace(s.CategoryId)
+                    ? (Guid?)null
                     : Guid.Parse(s.CategoryId)))
+            .ForMember(d => d.PackageId, opt => opt.MapFrom(s =>
+                string.IsNullOrWhiteSpace(s.PackageId)
+                    ? (Guid?)null
+                    : Guid.Parse(s.PackageId)))
             .ForMember(d => d.Category, opt => opt.Ignore())
             .ForMember(d => d.Package, opt => opt.Ignore());
 
@@ -43,8 +47,9 @@ public class CustomMapper : Profile
         // ===== Package =====
         CreateMap<Package, PackageDto>()
             .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
-            .ForMember(d => d.PartId, opt => opt.Ignore())
-            .ForMember(d => d.PartName, opt => opt.Ignore());
+            .ForMember(d => d.Category, opt => opt.MapFrom(s => s.Category));
+
+
 
         CreateMap<PackageDto, Package>()
             .ForMember(d => d.Status, opt => opt.MapFrom(s =>
@@ -57,7 +62,7 @@ public class CustomMapper : Profile
         CreateMap<Package, PackageDto>().ReverseMap();
 
 
-        // ===== Category ====
+        // ===== Category ===
         CreateMap<Category, CategoryDto>();
 
         CreateMap<Category, CategoryDto>().ReverseMap();

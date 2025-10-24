@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.CQRS.Commands.DeleteWarrantyPolicy;
 using PartCatalog.Application.Data;

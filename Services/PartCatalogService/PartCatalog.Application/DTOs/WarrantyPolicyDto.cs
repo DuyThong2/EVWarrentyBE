@@ -17,7 +17,7 @@ namespace PartCatalog.Application.DTOs
         public DateTime? UpdatedAt { get; set; }
 
         // Optional: include package info if needed
-        public string? PackageName { get; set; }
+        public PackageDto? Package { get; set; }
     }
 
     public class CreateWarrantyPolicyDto
@@ -25,8 +25,8 @@ namespace PartCatalog.Application.DTOs
         public Guid PackageId { get; set; }
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public PolicyType? Type { get; set; }
-        public ActiveStatus? Status { get; set; }
+        public string? Type { get; set; }
+        public string? Status { get; set; }
         public string? Description { get; set; }
         public int? WarrantyDuration { get; set; }
         public long? WarrantyDistance { get; set; }

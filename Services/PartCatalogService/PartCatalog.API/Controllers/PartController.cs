@@ -104,13 +104,15 @@ namespace PartCatalog.API.Controllers
         [HttpGet("filter")]
         public async Task<IActionResult> GetByFilter(
             [FromQuery] string? Name,
-            [FromQuery] string? CateName,
+            [FromQuery] Guid? CateId,
+            [FromQuery] string? SerialNumber,
+            [FromQuery] string? Manufacturer,
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
             var result = await _sender.Send(
-                new GetPartByFilterQuery(Name, CateName, pageIndex, pageSize),
+                new GetPartByFilterQuery(Name, CateId, SerialNumber, Manufacturer, pageIndex, pageSize),
                 cancellationToken
             );
             return Ok(result);

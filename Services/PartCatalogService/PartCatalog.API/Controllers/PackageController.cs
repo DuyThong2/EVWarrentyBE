@@ -35,7 +35,7 @@ namespace PartCatalog.API.Controllers
             if (!result.Success)
                 return BadRequest(result.Message);
 
-            return Ok(new { result.PackageId, result.Message });
+            return Ok(new { result.PackageId, result.Message, CreatedAt = result.CreatedAt });
         }
 
         // ===== Update =====
@@ -93,11 +93,14 @@ namespace PartCatalog.API.Controllers
             [FromQuery] string? Name,
             [FromQuery] string? PackageCode,
             [FromQuery] string? Model,
+            string? Status = null,
+            Guid? CateId = null,
+            DateTime? CreatedDate = null,
             [FromQuery] int pageIndex = 1,
             [FromQuery] int pageSize = 10,
             CancellationToken cancellationToken = default)
         {
-            var query = new GetPackageByFilterQuery(Name, PackageCode, Model, pageIndex, pageSize);
+            var query = new GetPackageByFilterQuery(Name, PackageCode, Model, Status, CateId, CreatedDate, pageIndex, pageSize);
             var result = await _sender.Send(query, cancellationToken);
             return Ok(result);
         }

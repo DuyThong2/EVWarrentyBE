@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
 using PartCatalog.Applications.UpdatePackage;
+using PartCatalog.Domain.Enums;
 
 namespace PartCatalog.Application.Features.Packages.Handlers
 {
@@ -37,21 +38,18 @@ namespace PartCatalog.Application.Features.Packages.Handlers
             entity.Name = dto.Name;
             entity.Description = dto.Description;
             entity.Model = dto.Model;
-            entity.Status = dto.Status;
+            if (!string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var statusValue))
+            {
+                entity.Status = statusValue;
+            }
+            else
+            {
+                entity.Status = null;
+            }
             entity.Quantity = dto.Quantity;
             entity.Note = dto.Note;
             entity.UpdatedAt = DateTime.UtcNow;
             entity.CategoryId = dto.CategoryId;
-            if (dto.PartId != null)
-            {
-
-                var newParts = await _context.Parts
-                    .Where(p => dto.PartId.Contains(p.PartId))
-                    .ToListAsync(cancellationToken);
-
-                entity.Parts?.Clear();
-                entity.Parts = newParts;
-            }
 
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -5,5 +5,5 @@ namespace PartCatalog.Application.Commands.CreatePackage
 {
     public record CreatePackageCommand(CreatePackageDto Package) : ICommand<CreatePackageResult>;
 
-    public record CreatePackageResult(Guid PackageId, bool Success, string? Message);
+    public record CreatePackageResult(Guid PackageId, bool Success, string? Message, DateTime? CreatedAt);
 }
