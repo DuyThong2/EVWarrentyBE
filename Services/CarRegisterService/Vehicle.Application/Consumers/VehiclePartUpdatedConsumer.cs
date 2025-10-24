@@ -60,7 +60,9 @@ namespace Vehicle.Application.Consumers
                 await CalculateWarrantyInfo(existingPart, message, context.CancellationToken);
 
                 await _vehiclePartRepository.UpdateAsync(existingPart, context.CancellationToken);
-                
+                await SaveNewPartToWarrantyHistory(existingPart, message, context.CancellationToken);
+
+
                 _logger.LogInformation("Successfully updated vehicle part {PartId} with new serial {NewSerial}", 
                     message.PartId, message.SerialNumber);
             }
@@ -93,13 +95,45 @@ namespace Vehicle.Application.Consumers
                 };
 
                 await _warrantyHistoryRepository.AddAsync(warrantyHistory, cancellationToken);
-                _logger.LogInformation("Saved old part {OldSerial} to warranty history for PartId {PartId}", 
+                _logger.LogInformation("Saved old part {OldSerial} to warranty history for PartId {PartId}",
                     oldPart.SerialNumber, message.PartId);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to save old part to warranty history for PartId {PartId}", message.PartId);
                 // Don't throw - this is not critical for the main flow
+            }
+        }
+
+        private async Task SaveNewPartToWarrantyHistory(VehiclePart newPart, VehiclePartUpdatedEvent message, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var newHistory = new WarrantyHistory
+                {
+                    HistoryId = Guid.NewGuid(),
+                    VehicleId = newPart.VehicleId,
+                    PartId = newPart.PartId,
+                    ClaimId = message.ClaimId,
+                    EventType = WarrantyEventType.INSTALLATION, // khác với REPLACEMENT của part cũ
+                    Description = $"New part installed: {message.SerialNumber}",
+                    PerformedBy = message.PerformedBy,
+                    WarrantyStartDate = newPart.WarrantyStartDate,
+                    WarrantyEndDate = newPart.WarrantyEndDate,
+                    WarrantyDistance = newPart.WarrantyDistance,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    Status = WarrantyHistoryStatus.Completed
+                };
+
+                await _warrantyHistoryRepository.AddAsync(newHistory, cancellationToken);
+                _logger.LogInformation("Saved new part {NewSerial} to warranty history for PartId {PartId}",
+                    newPart.SerialNumber, newPart.PartId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save new part to warranty history for PartId {PartId}", newPart.PartId);
+                // Không throw, tránh ảnh hưởng main flow
             }
         }
 
