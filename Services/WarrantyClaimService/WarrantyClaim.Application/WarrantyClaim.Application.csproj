@@ -18,8 +18,4 @@
 	  <ProjectReference Include="..\WarrantyClaim.Domain\WarrantyClaim.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Events\" />
-	</ItemGroup>
-
 </Project>
