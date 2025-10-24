@@ -13,7 +13,7 @@ namespace WarrantyClaim.Application.Dtos
         public Guid ClaimItemId { get; set; }
         public Guid? PartId { get; set; }
 
-        public string ? OldSerialNumber { get; set; }
+        public string? OldPartSerialNumber { get; set; } // Đổi tên để match với domain model
         public string? Description { get; set; }
         public string? NewSerialNumber { get; set; }
         public string? ShipmentCode { get; set; }

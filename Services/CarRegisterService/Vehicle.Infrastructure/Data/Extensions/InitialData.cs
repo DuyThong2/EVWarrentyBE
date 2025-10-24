@@ -53,12 +53,14 @@ namespace Vehicle.Infrastructure.Data
             {
                 PartId = partId,
                 VehicleId = vehicleId,
+                Code = "BAT-001",
                 SerialNumber = "BAT-123456789",
                 PartType = "BATTERY",
                 BatchCode = "BATCH-2023",
                 InstalledAt = fixedNow.AddMonths(-6),
                 WarrantyStartDate = fixedNow.AddMonths(-6),
                 WarrantyEndDate = fixedNow.AddYears(1),
+                WarrantyDistance = 50000, // km
                 Status = PartStatus.Installed // nếu HasConversion string → để "Installed"
             });
         }
