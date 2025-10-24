@@ -10,5 +10,6 @@
         public string? SerialNumber { get; set; }
         public string? CategoryId { get; set; }
         public string? Status { get; set; }
+        public string? PackageId { get; set; }
     }
 }

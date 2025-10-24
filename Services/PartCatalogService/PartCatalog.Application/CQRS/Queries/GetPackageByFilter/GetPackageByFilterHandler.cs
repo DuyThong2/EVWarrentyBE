@@ -32,6 +32,15 @@ namespace PartCatalog.Application.CQRS.Queries.GetPackageByFilter
             if (!string.IsNullOrWhiteSpace(request.Model))
                 query = query.Where(p => p.Model != null && p.Model.Contains(request.Model));
 
+            if (!string.IsNullOrWhiteSpace(request.Status))
+                query = query.Where(p => p.Status.ToString() == request.Status);
+
+            if (request.CateId.HasValue)
+                query = query.Where(p => p.CategoryId == request.CateId);
+
+            if (request.CreatedDate.HasValue)
+                query = query.Where(p => p.CreatedAt == request.CreatedDate.Value.Date);
+
             var totalCount = await query.CountAsync(cancellationToken);
 
             var items = await query
@@ -50,7 +59,6 @@ namespace PartCatalog.Application.CQRS.Queries.GetPackageByFilter
                     Note = p.Note,
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
-                    CategoryName = p.Category != null ? p.Category.CateName : null
                 })
                 .ToListAsync(cancellationToken);
 

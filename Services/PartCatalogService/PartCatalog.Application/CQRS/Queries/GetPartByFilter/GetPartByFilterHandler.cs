@@ -31,10 +31,19 @@ namespace PartCatalog.Application.CQRS.Queries.GetPartByFilter
                 query = query.Where(p => p.Name.Contains(request.Name));
             }
 
-            if (!string.IsNullOrWhiteSpace(request.CateName))
+            if (request.CateId.HasValue && request.CateId != Guid.Empty)
             {
-                query = query.Where(p => p.Category != null &&
-                                         p.Category.CateName.Contains(request.CateName));
+                query = query.Where(p => p.CateId.HasValue && p.CateId == request.CateId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.SerialNumber))
+            {
+                query = query.Where(p => p.SerialNumber != null && p.SerialNumber.Contains(request.SerialNumber));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Manufacturer))
+            {
+                query = query.Where(p => p.Manufacturer != null && p.Manufacturer.Contains(request.Manufacturer));
             }
 
 

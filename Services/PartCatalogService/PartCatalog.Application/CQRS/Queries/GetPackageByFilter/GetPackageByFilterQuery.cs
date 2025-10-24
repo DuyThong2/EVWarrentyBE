@@ -9,6 +9,9 @@ namespace PartCatalog.Application.CQRS.Queries.GetPackageByFilter
         string? Name,
         string? PackageCode,
         string? Model,
+        string? Status = null,
+        Guid? CateId = null,
+        DateTime? CreatedDate = null,
         int PageIndex = 1,
         int PageSize = 10
     ) : IQuery<GetPackageByFilterResult>;

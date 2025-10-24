@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.CQRS;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
 

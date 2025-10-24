@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using PartCatalog.Application.Commands.CreatePackage;
 using PartCatalog.Application.Data;
+using PartCatalog.Domain.Enums;
 using PartCatalog.Domain.Models;
 
 namespace PartCatalog.Application.Features.Packages.Handlers
@@ -21,7 +22,7 @@ namespace PartCatalog.Application.Features.Packages.Handlers
             // Validate unique PackageCode
             if (_context.Packages.Any(p => p.PackageCode == dto.PackageCode))
             {
-                return new CreatePackageResult(Guid.Empty, false, "PackageCode already exists.");
+                return new CreatePackageResult(Guid.Empty, false, "PackageCode already exists.", null);
             }
 
             var entity = new Package
@@ -31,26 +32,19 @@ namespace PartCatalog.Application.Features.Packages.Handlers
                 Name = dto.Name,
                 Description = dto.Description,
                 Model = dto.Model,
-                Status = dto.Status,
+                Status = !string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var status)
+                ? status
+                : ActiveStatus.ACTIVE,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Quantity = dto.Quantity,
                 Note = dto.Note
             };
 
-            if (dto.PartId != null && dto.PartId.Any())
-            {
-                var parts = await _context.Parts
-                    .Where(p => dto.PartId.Contains(p.PartId))
-                    .ToListAsync(cancellationToken);
-
-                entity.Parts = parts;
-            }
-
             _context.Packages.Add(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new CreatePackageResult(entity.PackageId, true, "Package created successfully.");
+            return new CreatePackageResult(entity.PackageId, true, "Package created successfully.", entity.CreatedAt);
         }
     }
 }
