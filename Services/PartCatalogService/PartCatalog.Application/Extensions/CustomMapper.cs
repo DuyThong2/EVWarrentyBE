@@ -72,9 +72,9 @@ public class CustomMapper : Profile
             .ForMember(d => d.CreatedAt, opt => opt.Ignore())
             .ForMember(d => d.UpdatedAt, opt => opt.Ignore());
 
-        CreateMap<WarrantyPolicy, WarrantyPolicyDto>()
-            .ForMember(d => d.PackageName, opt => opt.MapFrom(s => s.Package != null ? s.Package.Name : null));
-
+        CreateMap<WarrantyPolicy, WarrantyPolicyDto>();
+      
+        
         CreateMap<WarrantyPolicy, WarrantyPolicyDto>().ReverseMap();
     }
 
