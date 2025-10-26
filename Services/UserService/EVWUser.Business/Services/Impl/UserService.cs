@@ -1,10 +1,12 @@
-﻿using AutoMapper;
+using AutoMapper;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.Messaging.Events;
 using BuildingBlocks.Pagination;
 using EVWUser.Business.Dtos;
 using EVWUser.Data.Enums;
 using EVWUser.Data.Models;
 using EVWUser.Data.Repositories;
+using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
@@ -16,13 +18,15 @@ namespace EVWUser.Business.Services.Impl
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public UserService(IUserRepository userRepository, IUserRoleRepository userRoleRepository, IMapper mapper, IRoleRepository roleRepository)
+        public UserService(IUserRepository userRepository, IUserRoleRepository userRoleRepository, IMapper mapper, IRoleRepository roleRepository, IPublishEndpoint publishEndpoint)
         {
             _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
             _roleRepository = roleRepository;
             _mapper = mapper;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
@@ -115,6 +119,14 @@ namespace EVWUser.Business.Services.Impl
             }
 
             var updated = await _userRepository.UpdateUserAsync(existingUser);
+            await _publishEndpoint.Publish(new UserUpdatedEvent
+            {
+                UserId = updated.UserId,
+                Username = updated.Username,
+                Email = updated.Email,
+                Phone = updated.Phone,
+                Status = updated.Status.ToString()
+            });
             return await MapRolesToDto(updated);
         }
 
