@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using PartCatalog.Application.DTOs;
 using PartCatalog.Domain.Models;
@@ -17,6 +17,12 @@ public class CustomMapper : Profile
             .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
             .ForMember(d => d.Category, opt => opt.MapFrom(s => s.Category))
             .ForMember(d => d.Package, opt => opt.MapFrom(s => s.Package));
+
+        CreateMap<Part, UpdatePartDto>()
+            .ForMember(d => d.Id, opt => opt.MapFrom(s => s.PartId))
+            .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
+            .ForMember(d => d.CategoryId, opt => opt.MapFrom(s => s.CateId))
+            .ForMember(d => d.PackageId, opt => opt.MapFrom(s => s.PackageId));
 
         CreateMap<PartDto, Part>()
             .ForMember(d => d.Status, opt => opt.MapFrom(s =>
@@ -40,6 +46,16 @@ public class CustomMapper : Profile
                 string.IsNullOrWhiteSpace(s.PackageId)
                     ? (Guid?)null
                     : Guid.Parse(s.PackageId)))
+            .ForMember(d => d.Category, opt => opt.Ignore())
+            .ForMember(d => d.Package, opt => opt.Ignore());
+
+        CreateMap<UpdatePartDto, Part>()
+            .ForMember(d => d.PartId, opt => opt.MapFrom(s => s.Id))
+            .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                string.IsNullOrWhiteSpace(s.Status)
+                    ? ActiveStatus.ACTIVE
+                    : ParseEnumOrDefault(s.Status, ActiveStatus.ACTIVE)))
+            .ForMember(d => d.CateId, opt => opt.MapFrom(s => s.CategoryId))
             .ForMember(d => d.Category, opt => opt.Ignore())
             .ForMember(d => d.Package, opt => opt.Ignore());
 
