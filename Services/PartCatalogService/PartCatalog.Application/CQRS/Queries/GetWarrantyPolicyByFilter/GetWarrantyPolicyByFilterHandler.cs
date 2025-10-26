@@ -57,7 +57,7 @@ namespace PartCatalog.Application.CQRS.Queries.GetWarrantyPolicyByFilter
                     WarrantyDistance = w.WarrantyDistance,
                     CreatedAt = w.CreatedAt,
                     UpdatedAt = w.UpdatedAt,
-                    PackageName = w.Package != null ? w.Package.Name : null
+                 
                 })
                 .ToListAsync(cancellationToken);
 

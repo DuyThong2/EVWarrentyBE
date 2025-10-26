@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Vehicle.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Vehicle.Infrastructure.Data;
 namespace Vehicle.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251026022319_AddAppointmentTable")]
+    partial class AddAppointmentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,9 +52,13 @@ namespace Vehicle.Infrastructure.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("notes");
 
-                    b.Property<DateTime>("ScheduledDateTime")
+                    b.Property<DateTime>("ScheduledDate")
                         .HasColumnType("datetime2")
-                        .HasColumnName("scheduledDateTime");
+                        .HasColumnName("scheduledDate");
+
+                    b.Property<DateTime>("ScheduledTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("scheduledTime");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -70,8 +77,8 @@ namespace Vehicle.Infrastructure.Migrations
 
                     b.HasKey("AppointmentId");
 
-                    b.HasIndex("ScheduledDateTime")
-                        .HasDatabaseName("ix_appointment_scheduleddatetime");
+                    b.HasIndex("ScheduledDate")
+                        .HasDatabaseName("ix_appointment_scheduleddate");
 
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_appointment_status");

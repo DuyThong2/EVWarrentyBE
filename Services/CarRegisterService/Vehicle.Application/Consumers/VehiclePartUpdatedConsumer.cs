@@ -10,15 +10,18 @@ namespace Vehicle.Application.Consumers
     {
         private readonly IVehiclePartRepository _vehiclePartRepository;
         private readonly IWarrantyHistoryRepository _warrantyHistoryRepository;
+        private readonly IPublishEndpoint _publishEndpoint;
         private readonly ILogger<VehiclePartUpdatedConsumer> _logger;
 
         public VehiclePartUpdatedConsumer(
             IVehiclePartRepository vehiclePartRepository,
             IWarrantyHistoryRepository warrantyHistoryRepository,
+            IPublishEndpoint publishEndpoint,
             ILogger<VehiclePartUpdatedConsumer> logger)
         {
             _vehiclePartRepository = vehiclePartRepository;
             _warrantyHistoryRepository = warrantyHistoryRepository;
+            _publishEndpoint = publishEndpoint;
             _logger = logger;
         }
 
@@ -49,22 +52,29 @@ namespace Vehicle.Application.Consumers
                 }
 
                 // Lưu thông tin part cũ vào WarrantyHistory trước khi update
+                _logger.LogInformation("STEP 1: Saving old part to warranty history - PartId: {PartId}, OldSerial: {OldSerial}", 
+                    message.PartId, existingPart.SerialNumber);
                 await SaveOldPartToWarrantyHistory(existingPart, message, context.CancellationToken);
 
                 // Update VehiclePart với thông tin mới
+                _logger.LogInformation("STEP 2: Updating part with new serial - PartId: {PartId}, NewSerial: {NewSerial}", 
+                    message.PartId, message.SerialNumber);
                 existingPart.SerialNumber = message.SerialNumber;
                 existingPart.Status = PartStatus.Installed; // Force status to Installed
                 existingPart.InstalledAt = DateTime.UtcNow;
 
-                // Tính toán warranty dates và distance từ WarrantyPolicy
-                await CalculateWarrantyInfo(existingPart, message, context.CancellationToken);
+                // Request warranty policy từ PartCatalogService để cộng vào warranty hiện tại
+                _logger.LogInformation("STEP 3: Requesting warranty policy from PartCatalogService - PartId: {PartId}", message.PartId);
+                await RequestWarrantyPolicy(existingPart, message, context.CancellationToken);
 
+                _logger.LogInformation("STEP 4: Updating part in database - PartId: {PartId}", message.PartId);
                 await _vehiclePartRepository.UpdateAsync(existingPart, context.CancellationToken);
+                
+                _logger.LogInformation("STEP 5: Saving new part to warranty history - PartId: {PartId}", message.PartId);
                 await SaveNewPartToWarrantyHistory(existingPart, message, context.CancellationToken);
 
 
-                _logger.LogInformation("Successfully updated vehicle part {PartId} with new serial {NewSerial}", 
-                    message.PartId, message.SerialNumber);
+                _logger.LogInformation("=== COMPLETED VehiclePartUpdatedEvent === PartId: {PartId}", message.PartId);
             }
             catch (Exception ex)
             {
@@ -137,26 +147,30 @@ namespace Vehicle.Application.Consumers
             }
         }
 
-        private async Task CalculateWarrantyInfo(VehiclePart part, VehiclePartUpdatedEvent message, CancellationToken cancellationToken)
+        private async Task RequestWarrantyPolicy(VehiclePart part, VehiclePartUpdatedEvent message, CancellationToken cancellationToken)
         {
             try
             {
-                // TODO: Implement logic to get WarrantyPolicy from PartCatalogService
-                // For now, set default values
-                part.WarrantyStartDate = DateTime.UtcNow;
-                part.WarrantyEndDate = DateTime.UtcNow.AddMonths(12); // Default 12 months
-                part.WarrantyDistance = 50000; // Default 50,000 km
+                var requestId = Guid.NewGuid();
+                var warrantyRequest = new WarrantyPolicyRequestedEvent
+                {
+                    PartId = part.PartId,
+                    SerialNumber = message.SerialNumber,
+                    Code = part.Code,
+                    RequestId = requestId
+                };
 
-                _logger.LogInformation("Calculated warranty info for PartId {PartId}: Start={StartDate}, End={EndDate}, Distance={Distance}km", 
-                    message.PartId, part.WarrantyStartDate, part.WarrantyEndDate, part.WarrantyDistance);
+                _logger.LogInformation("Publishing WarrantyPolicyRequestedEvent - PartId: {PartId}, SerialNumber: {SerialNumber}, Code: {Code}, RequestId: {RequestId}", 
+                    part.PartId, message.SerialNumber, part.Code, requestId);
+                
+                await _publishEndpoint.Publish(warrantyRequest, cancellationToken);
+                
+                _logger.LogInformation("✅ Successfully published WarrantyPolicyRequestedEvent - RequestId: {RequestId}", requestId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to calculate warranty info for PartId {PartId}", message.PartId);
-                // Set default values if calculation fails
-                part.WarrantyStartDate = DateTime.UtcNow;
-                part.WarrantyEndDate = DateTime.UtcNow.AddMonths(12);
-                part.WarrantyDistance = 50000;
+                _logger.LogError(ex, "❌ Failed to publish WarrantyPolicyRequestedEvent for PartId {PartId}", message.PartId);
+                // Không set default values ở đây - để WarrantyPolicyResponseConsumer xử lý
             }
         }
     }
