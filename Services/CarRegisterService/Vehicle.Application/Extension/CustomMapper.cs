@@ -32,6 +32,8 @@ namespace Vehicle.Application.Extension
                 .ForMember(d => d.Parts, opt => opt.MapFrom(s => s.Parts))
                 .ForMember(d => d.Customer, opt => opt.MapFrom(s => s.Customer));
 
+            CreateMap<Vehicle.Domain.Models.Vehicle, VehicleBriefDto>();
+
             // ===== Customer =====
             CreateMap<CreateCustomerDto, Customer>()
                 .ForMember(d => d.Status, opt => opt.MapFrom(s =>
@@ -78,6 +80,24 @@ namespace Vehicle.Application.Extension
             // ===== WarrantyHistory =====
             CreateMap<WarrantyHistory, WarrantyHistoryDto>()
                 .ForMember(d => d.VIN, opt => opt.MapFrom(s => s.Vehicle.VIN));
+
+            // ===== Appointment =====
+            CreateMap<CreateAppointmentDto, Appointment>()
+                .ForMember(d => d.AppointmentType, opt => opt.MapFrom(s =>
+                    ParseEnumOrDefault(s.AppointmentType, AppointmentType.Other)))
+                .ForMember(d => d.Vehicle, opt => opt.Ignore());
+
+            CreateMap<Appointment, AppointmentDto>()
+                .ForMember(d => d.AppointmentType, opt => opt.MapFrom(s => s.AppointmentType.ToString()))
+                .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status.ToString()))
+                .ForMember(d => d.Vehicle, opt => opt.MapFrom(s => s.Vehicle));
+
+            CreateMap<UpdateAppointmentDto, Appointment>()
+                .ForMember(d => d.AppointmentType, opt => opt.MapFrom(s =>
+                    ParseEnumOrDefault(s.AppointmentType, AppointmentType.Other)))
+                .ForMember(d => d.Status, opt => opt.MapFrom(s =>
+                    ParseEnumOrDefault(s.Status, AppointmentStatus.Scheduled)))
+                .ForMember(d => d.Vehicle, opt => opt.Ignore());
         }
 
         private static TEnum ParseEnumOrDefault<TEnum>(string? value, TEnum fallback)

@@ -15,6 +15,7 @@ namespace Vehicle.Infrastructure.Data
         public DbSet<VehiclePart> VehicleParts { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<WarrantyHistory> WarrantyHistories { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -92,6 +93,12 @@ namespace Vehicle.Infrastructure.Data
                 .HasQueryFilter(w =>
                     w.Status != WarrantyHistoryStatus.Deleted &&
                     w.Vehicle.Status != VehicleStatus.Deleted);
+
+            // Appointment: chỉ hiển thị khi Appointment và Vehicle chưa bị xóa
+            modelBuilder.Entity<Appointment>()
+                .HasQueryFilter(a =>
+                    a.Status != AppointmentStatus.Deleted &&
+                    a.Vehicle.Status != VehicleStatus.Deleted);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Vehicle.Application.Data
         DbSet<VehiclePart> VehicleParts { get; }
         DbSet<VehicleImage> VehicleImages { get; }
         DbSet<WarrantyHistory> WarrantyHistories { get; }
+        DbSet<Appointment> Appointments { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
