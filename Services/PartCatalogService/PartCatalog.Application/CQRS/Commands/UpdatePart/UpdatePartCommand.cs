@@ -1,11 +1,11 @@
-﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.CQRS;
 using FluentValidation;
 using PartCatalog.Application.DTOs;
 
 namespace PartCatalog.Application.CQRS.Commands.UpdatePart
 {
     // Command nhận dữ liệu từ client (bao gồm Id để update)
-    public record UpdatePartCommand(Guid PartId, PartDto Part)
+    public record UpdatePartCommand(Guid PartId, UpdatePartDto Part)
         : ICommand<UpdatePartResult>;
 
     // Kết quả trả về

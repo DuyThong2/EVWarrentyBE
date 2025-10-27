@@ -1,4 +1,4 @@
-﻿using PartCatalog.Domain.Enums;
+using PartCatalog.Domain.Enums;
 
 namespace PartCatalog.Application.DTOs
 {
@@ -22,6 +22,19 @@ namespace PartCatalog.Application.DTOs
 
     public class CreateWarrantyPolicyDto
     {
+        public Guid PackageId { get; set; }
+        public string Code { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string? Type { get; set; }
+        public string? Status { get; set; }
+        public string? Description { get; set; }
+        public int? WarrantyDuration { get; set; }
+        public long? WarrantyDistance { get; set; }
+    }
+
+    public class UpdateWarrantyPolicyDto
+    {
+        public Guid PolicyId { get; set; }
         public Guid PackageId { get; set; }
         public string Code { get; set; } = null!;
         public string Name { get; set; } = null!;

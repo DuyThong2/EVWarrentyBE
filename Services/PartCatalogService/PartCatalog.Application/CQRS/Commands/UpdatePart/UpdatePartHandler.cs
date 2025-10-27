@@ -1,7 +1,6 @@
-﻿using BuildingBlocks.CQRS;
-using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+using BuildingBlocks.CQRS;
 using PartCatalog.Application.Data;
+using PartCatalog.Domain.Enums;
 using PartCatalog.Domain.Models;
 
 namespace PartCatalog.Application.CQRS.Commands.UpdatePart
@@ -10,12 +9,10 @@ namespace PartCatalog.Application.CQRS.Commands.UpdatePart
         : ICommandHandler<UpdatePartCommand, UpdatePartResult>
     {
         private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public UpdatePartHandler(IApplicationDbContext context, IMapper mapper)
+        public UpdatePartHandler(IApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<UpdatePartResult> Handle(UpdatePartCommand request, CancellationToken cancellationToken)
@@ -26,8 +23,22 @@ namespace PartCatalog.Application.CQRS.Commands.UpdatePart
             if (part == null)
                 return new UpdatePartResult(false);
 
-            // Map dữ liệu mới từ DTO vào entity (chỉ các field cho phép update)
-            _mapper.Map(request.Part, part);
+            var dto = request.Part;
+
+            part.Name = dto.Name;
+            part.Description = dto.Description;
+            part.Price = dto.Price;
+            part.Manufacturer = dto.Manufacturer;
+            part.Unit = dto.Unit;
+            part.SerialNumber = dto.SerialNumber;
+
+            if (!string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var statusValue))
+            {
+                part.Status = statusValue;
+            }
+
+            part.CateId = dto.CategoryId;
+            part.PackageId = dto.PackageId;
 
             _context.Parts.Update(part);
             await _context.SaveChangesAsync(cancellationToken);
