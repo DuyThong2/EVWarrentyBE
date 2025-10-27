@@ -69,7 +69,7 @@ namespace PartCatalog.API.Controllers
 
         // ===== Update =====
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdatePart(Guid id, [FromBody] PartDto partDto)
+        public async Task<IActionResult> UpdatePart(Guid id, [FromBody] UpdatePartDto partDto)
         {
             if (id == Guid.Empty)
                 return BadRequest();

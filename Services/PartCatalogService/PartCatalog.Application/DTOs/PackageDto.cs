@@ -1,4 +1,4 @@
-﻿using PartCatalog.Domain.Enums;
+using PartCatalog.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

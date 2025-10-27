@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
 using PartCatalog.Application.CQRS.Queries.GetPackageById;
@@ -17,7 +17,6 @@ namespace PartCatalog.Application
         public async Task<GetPackageByIdResult> Handle(GetPackageByIdQuery request, CancellationToken cancellationToken)
         {
             var package = await _context.Packages
-                .Include(p => p.Parts) // load parts in package
                 .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.PackageId == request.PackageId, cancellationToken);
 

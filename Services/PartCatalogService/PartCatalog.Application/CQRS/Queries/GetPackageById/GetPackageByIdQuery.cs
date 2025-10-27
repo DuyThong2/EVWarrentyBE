@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.CQRS;
 using PartCatalog.Domain.Models;
 
 namespace PartCatalog.Application.CQRS.Queries.GetPackageById

@@ -1,6 +1,8 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
+using PartCatalog.Domain.Enums;
+using PartCatalog.Domain.Models;
 
 namespace PartCatalog.Application.CQRS.Commands.UpdateWarrantyPolicy
 {
@@ -28,8 +30,15 @@ namespace PartCatalog.Application.CQRS.Commands.UpdateWarrantyPolicy
             // Cập nhật thông tin
             entity.Code = dto.Code;
             entity.Name = dto.Name;
-            entity.Type = dto.Type;
-            entity.Status = dto.Status;
+            if (!string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var typeValue))
+            {
+                entity.Status = typeValue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var statusValue))
+            {
+                entity.Status = statusValue;
+            }
             entity.Description = dto.Description;
             entity.WarrantyDuration = dto.WarrantyDuration;
             entity.WarrantyDistance = dto.WarrantyDistance;

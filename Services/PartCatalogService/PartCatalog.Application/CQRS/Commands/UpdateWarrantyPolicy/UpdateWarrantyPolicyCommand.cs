@@ -1,10 +1,10 @@
-﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.CQRS;
 using FluentValidation;
 using PartCatalog.Application.DTOs;
 
 namespace PartCatalog.Application.CQRS.Commands.UpdateWarrantyPolicy
 {
-    public record UpdateWarrantyPolicyCommand(WarrantyPolicyDto Policy)
+    public record UpdateWarrantyPolicyCommand(UpdateWarrantyPolicyDto Policy)
         : ICommand<UpdateWarrantyPolicyResult>;
 
     public record UpdateWarrantyPolicyResult(bool IsSuccess, string Message);
