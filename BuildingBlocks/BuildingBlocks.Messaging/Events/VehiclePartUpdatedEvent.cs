@@ -6,6 +6,7 @@ namespace BuildingBlocks.Messaging.Events
         public Guid PartId { get; init; }
         public Guid? VehicleId { get; init; }
         public string SerialNumber { get; init; } = string.Empty;
+        public string? OldPartSerialNumber { get; init; } // Thêm field mới
         public string? PartType { get; init; }
         public string? BatchCode { get; init; }
         public DateTime? InstalledAt { get; init; }
@@ -15,5 +16,7 @@ namespace BuildingBlocks.Messaging.Events
         public string? Description { get; init; }
         public string? ShipmentCode { get; init; }
         public string? ShipmentRef { get; init; }
+        public Guid? ClaimId { get; init; } // Thêm ClaimId
+        public Guid? PerformedBy { get; init; } // Thêm PerformedBy (StaffId)
     }
 }

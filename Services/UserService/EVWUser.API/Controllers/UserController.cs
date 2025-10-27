@@ -9,6 +9,7 @@ namespace EVWUser.API.Controllers
 {
     [ApiController]
     [Route("api/users")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -23,6 +24,7 @@ namespace EVWUser.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpGet("{id:guid}")]
+        [Authorize]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetById(Guid id)
         {
@@ -34,6 +36,7 @@ namespace EVWUser.API.Controllers
         /// Get users with filter and pagination
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetPaged([FromQuery] Guid? roleId, [FromQuery] string? email, [FromQuery] int index = 1, [FromQuery] int pageSize= 10)
         {
@@ -54,6 +57,7 @@ namespace EVWUser.API.Controllers
         /// Create a new user
         /// </summary>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status201Created)]
         public async Task<ActionResult> Create(UserCreateRequest request)
         {
@@ -66,6 +70,7 @@ namespace EVWUser.API.Controllers
         /// Update an existing user
         /// </summary>
         [HttpPut("{id:guid}")]
+        [Authorize]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> Update(Guid id, UserUpdateRequest request)
         {
@@ -77,6 +82,7 @@ namespace EVWUser.API.Controllers
         /// Soft delete or locked a user
         /// </summary>
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
         public async Task<ActionResult> SoftDelete(Guid id)
         {

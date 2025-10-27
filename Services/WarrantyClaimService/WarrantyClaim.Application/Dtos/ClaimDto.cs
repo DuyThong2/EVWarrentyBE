@@ -20,5 +20,8 @@ namespace WarrantyClaim.Application.Dtos
         public List<ClaimItemDto> Items { get; set; } = new();
 
         public TechnicianDto ? Technician { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? LastModified { get; set; }
     }
 }

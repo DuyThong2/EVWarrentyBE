@@ -2,6 +2,7 @@
 using EVWUser.Business.Dtos;
 using EVWUser.Business.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EVWUser.API.Controllers
@@ -34,10 +35,18 @@ namespace EVWUser.API.Controllers
         /// <param name="token">The JWT token string</param>
         /// <returns>UserDto if token is valid</returns>
         [HttpPost("extract-token")]
+        [Authorize]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<UserDto>> ExtractToken([FromBody] string token)
+        public async Task<ActionResult<UserDto>> ExtractToken()
         {
+            var authHeader = Request.Headers["Authorization"].ToString();
+
+            if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                return BadRequest(ApiResponse<string>.Fail("Missing or invalid Authorization header"));
+
+            var token = authHeader.Substring("Bearer ".Length).Trim();
+
             var user = await _authService.ExtractTokenAsync(token);
             return Ok(ApiResponse<UserDto>.Ok(user, "Extract token successfully"));
         }

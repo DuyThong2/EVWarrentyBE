@@ -32,5 +32,29 @@ namespace EVWUser.Data.Extensions
                 Description = "Administrator with full access",
             }
         };
+
+        public static IEnumerable<User> Users =>
+        new List<User>
+        {
+            new User
+            {
+                UserId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                Username = "admin",
+                Email = "admin@gmail.com",
+                PasswordHash = "AQAAAAEAACcQAAAAEO61Q6Ij9hZ0h7Jmu7Lz7cX1W6bUij6rT29FqUa4QIxLuKJ0PNQRPx6C+23kY/JJ4A==",
+                Status = Enums.UserStatus.ACTIVE,
+                AvatarUrl = "https://png.pngtree.com/png-clipart/20240917/original/pngtree-administrator-admin-avatar-png-image_16031562.png"
+            }
+        };
+
+        public static IEnumerable<UserRole> UserRoles =>
+        new List<UserRole>
+        {
+            new UserRole
+            {
+                UserId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                RoleId = Guid.Parse("44444444-4444-4444-4444-444444444444") // Admin role
+            }
+        };
     }
 }

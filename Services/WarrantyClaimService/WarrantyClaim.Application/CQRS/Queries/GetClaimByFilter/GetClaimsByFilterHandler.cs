@@ -45,25 +45,57 @@ internal class GetClaimsFilteredHandler
 
     private IQueryable<Claim> ApplyFilters(IQueryable<Claim> query, ClaimsFilter f)
     {
-        if (f.Id is Guid id) query = query.Where(c => c.Id == id);
-        //if (f.StaffId is Guid staffId) query = query.Where(c => c.StaffId == staffId);
+        if (f is null) return query;
+
+        if (f.Id is Guid id)
+            query = query.Where(c => c.Id == id);
+
         if (!string.IsNullOrWhiteSpace(f.VIN))
             query = query.Where(c => c.VIN.Contains(f.VIN));
+
         if (EnumParser.TryParseEnum<ClaimStatus>(f.Status, out var parsedStatus))
             query = query.Where(c => c.Status == parsedStatus);
 
         if (EnumParser.TryParseEnum<ClaimType>(f.ClaimType, out var parsedType))
             query = query.Where(c => c.ClaimType == parsedType);
-        //if (f.ClaimItemId is Guid claimItemId)
-        //    query = query.Where(c => c.Items.Any(i => i.Id == claimItemId));
-        if (f.Start.HasValue && f.End.HasValue)
+
+        // --- Time range (theo dateField) ---
+        if (f.Start.HasValue || f.End.HasValue)
         {
-            var start = f.Start.Value;
-            var end = f.End.Value;
-            query = query.Where(c =>
-                (c.CreatedAt >= start && c.CreatedAt <= end) ||
-                (c.LastModified >= start && c.LastModified <= end));
+            var start = f.Start ?? DateTime.MinValue;
+            var end = f.End ?? DateTime.MaxValue;
+
+            // dateField: createdAt | lastModified | null => mặc định createdAt
+            var df = (f.DateField ?? "createdAt").Trim();
+            if (df.Equals("lastModified", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(c => c.LastModified >= start && c.LastModified <= end);
+            }
+            else if (df.Equals("createdAt", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(c => c.CreatedAt >= start && c.CreatedAt <= end);
+            }
+            else
+            {
+                // fallback: áp cho cả hai nếu dateField không hợp lệ
+                query = query.Where(c =>
+                    (c.CreatedAt >= start && c.CreatedAt <= end) ||
+                    (c.LastModified >= start && c.LastModified <= end));
+            }
         }
+
+        // --- Distance range: UI gửi km -> convert sang mét ---
+        int? minM = null, maxM = null;
+        if (f.DistanceMin.HasValue) minM = (int)Math.Round(f.DistanceMin.Value);
+        if (f.DistanceMax.HasValue) maxM = (int)Math.Round(f.DistanceMax.Value);
+
+        if (minM.HasValue) query = query.Where(c => c.DistanceMeter >= minM.Value);
+        if (maxM.HasValue) query = query.Where(c => c.DistanceMeter <= maxM.Value);
+
+        // --- Total price range ---
+        if (f.PriceMin.HasValue) query = query.Where(c => c.TotalPrice >= f.PriceMin.Value);
+        if (f.PriceMax.HasValue) query = query.Where(c => c.TotalPrice <= f.PriceMax.Value);
+
         return query;
     }
 

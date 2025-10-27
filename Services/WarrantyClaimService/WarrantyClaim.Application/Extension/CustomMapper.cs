@@ -60,7 +60,10 @@ public class CustomMapper : Profile
             .ForMember(d => d.Status, opt => opt.MapFrom(s =>
                 EnumParser.ParseOrDefault(s.Status, ClaimStatus.SUBMITTED)))
             .ForMember(d => d.Items, opt => opt.Ignore())
-            .ForMember(d => d.FileURL, opt => opt.Ignore());
+            .ForMember(d => d.FileURL, opt => opt.Ignore())
+            .ForMember(d => d.CreatedAt, opt => opt.Ignore())
+            .ForMember(d => d.LastModified, opt => opt.Ignore())
+            ;
         
 
         // ===== ClaimItem <-> ClaimItemDto =====

@@ -6,11 +6,9 @@ namespace Vehicle.Application.Filters
         public string? VIN { get; set; }
         public Guid? PartId { get; set; }
         public Guid? ClaimId { get; set; }
-        public Guid? PolicyId { get; set; }
         public string? EventType { get; set; } // REPAIR, REPLACEMENT, INSPECTION, EXTENSION
         public string? Description { get; set; }
         public Guid? PerformedBy { get; set; }
-        public string? ServiceCenterName { get; set; }
         public string? Status { get; set; } // Active, Completed, Cancelled, Deleted
         public DateTime? WarrantyStartDateFrom { get; set; }
         public DateTime? WarrantyStartDateTo { get; set; }

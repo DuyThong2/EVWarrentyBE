@@ -19,6 +19,11 @@ namespace Vehicle.Infrastructure.Data.Configurations
 
             b.Property(p => p.VehicleId).HasColumnName("vehicleId");
 
+            b.Property(p => p.Code)
+                .HasColumnName("code")
+                .HasMaxLength(50)
+                .IsRequired();
+
             b.Property(p => p.SerialNumber)
                 .HasColumnName("serialNumber")
                 .HasMaxLength(100)
@@ -37,6 +42,7 @@ namespace Vehicle.Infrastructure.Data.Configurations
             b.Property(p => p.InstalledAt).HasColumnName("installedAt");
             b.Property(p => p.WarrantyStartDate).HasColumnName("warrantyStartDate");
             b.Property(p => p.WarrantyEndDate).HasColumnName("warrantyEndDate");
+            b.Property(p => p.WarrantyDistance).HasColumnName("warrantyDistance");
 
             b.Property(p => p.Status)
                 .HasColumnName("status")

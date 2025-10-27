@@ -17,9 +17,6 @@ namespace Vehicle.Infrastructure.Data.Configurations
             builder.Property(w => w.Description)
                 .HasMaxLength(1000);
 
-            builder.Property(w => w.ServiceCenterName)
-                .HasMaxLength(150);
-
             builder.Property(w => w.EventType)
                 .HasConversion<int>()
                 .IsRequired();
@@ -33,6 +30,8 @@ namespace Vehicle.Infrastructure.Data.Configurations
 
             builder.Property(w => w.UpdatedAt)
                 .IsRequired();
+
+            builder.Property(w => w.WarrantyDistance);
 
             // Foreign key relationships
             builder.HasOne(w => w.Vehicle)
@@ -49,7 +48,6 @@ namespace Vehicle.Infrastructure.Data.Configurations
             builder.HasIndex(w => w.VehicleId);
             builder.HasIndex(w => w.PartId);
             builder.HasIndex(w => w.ClaimId);
-            builder.HasIndex(w => w.PolicyId);
             builder.HasIndex(w => w.EventType);
             builder.HasIndex(w => w.Status);
             builder.HasIndex(w => w.PerformedBy);
