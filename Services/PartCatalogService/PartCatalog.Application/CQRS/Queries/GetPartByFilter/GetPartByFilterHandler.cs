@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BuildingBlocks.CQRS;
 using BuildingBlocks.Pagination;
@@ -24,7 +24,12 @@ namespace PartCatalog.Application.CQRS.Queries.GetPartByFilter
             GetPartByFilterQuery request,
             CancellationToken cancellationToken)
         {
-            var query = _context.Parts.AsNoTracking();
+            var query = _context.Parts
+                .AsNoTracking()
+                .Include(p => p.Category)
+                .Include(p => p.Package)
+                    .ThenInclude(pkg => pkg.Category);
+
 
             if (!string.IsNullOrWhiteSpace(request.Name))
             {
@@ -34,6 +39,11 @@ namespace PartCatalog.Application.CQRS.Queries.GetPartByFilter
             if (request.CateId.HasValue && request.CateId != Guid.Empty)
             {
                 query = query.Where(p => p.CateId.HasValue && p.CateId == request.CateId);
+            }
+
+            if (request.PackageId.HasValue && request.PackageId != Guid.Empty)
+            {
+                query = query.Where(p => p.PackageId.HasValue && p.PackageId == request.PackageId);
             }
 
             if (!string.IsNullOrWhiteSpace(request.SerialNumber))
@@ -49,13 +59,12 @@ namespace PartCatalog.Application.CQRS.Queries.GetPartByFilter
 
             var totalCount = await query.CountAsync(cancellationToken);
 
-            var items = await query
+            var data = await query
                 .OrderBy(p => p.PartId)
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .Select(p => _mapper.Map<PartDto>(p))
                 .ToListAsync(cancellationToken);
-
-            var data = items.Select(p => _mapper.Map<PartDto>(p)).ToList();
 
             return new PaginatedResult<PartDto>(
                 request.PageIndex,

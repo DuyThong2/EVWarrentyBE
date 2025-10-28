@@ -45,7 +45,7 @@ namespace PartCatalog.API.Controllers
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = result.PartId },
-                new { id = result.PartId }
+                result
             );
         }
 
@@ -105,6 +105,7 @@ namespace PartCatalog.API.Controllers
         public async Task<IActionResult> GetByFilter(
             [FromQuery] string? Name,
             [FromQuery] Guid? CateId,
+            [FromQuery] Guid? PackageId,
             [FromQuery] string? SerialNumber,
             [FromQuery] string? Manufacturer,
             [FromQuery] int pageIndex = 1,
@@ -112,7 +113,7 @@ namespace PartCatalog.API.Controllers
             CancellationToken cancellationToken = default)
         {
             var result = await _sender.Send(
-                new GetPartByFilterQuery(Name, CateId, SerialNumber, Manufacturer, pageIndex, pageSize),
+                new GetPartByFilterQuery(Name, CateId, PackageId, SerialNumber, Manufacturer, pageIndex, pageSize),
                 cancellationToken
             );
             return Ok(result);

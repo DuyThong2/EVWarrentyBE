@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.CQRS;
 using AutoMapper;
 using PartCatalog.Application.Data;
 using PartCatalog.Domain.Models;
@@ -27,7 +27,7 @@ namespace PartCatalog.Application.CQRS.Commands.CreatePart
             _context.Parts.Add(part);
             await _context.SaveChangesAsync(cancellationToken);
 
-            return new CreatePartResult(part.PartId);
+            return new CreatePartResult(part.PartId, true, "Part created successfully.");
         }
     }
 }
