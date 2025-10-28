@@ -189,7 +189,7 @@ namespace EVWUser.Data.Repositories.Impl
             }
         }
 
-        public async Task<PaginatedResult<User>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request)
+        public async Task<PaginatedResult<User>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request, Guid? excludeUserId = null)
         {
             try
             {
@@ -213,6 +213,9 @@ namespace EVWUser.Data.Repositories.Impl
                     query = query.Where(u =>
                         u.UserRoles.Any(ur => ur.Role.Name.ToLower().Contains(normalizedRole)));
                 }
+
+                if (excludeUserId.HasValue)
+                    query = query.Where(u => u.UserId != excludeUserId.Value);
 
                 var totalCount = await query.LongCountAsync();
 

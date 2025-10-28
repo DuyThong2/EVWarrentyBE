@@ -32,9 +32,12 @@ namespace EVWUser.API.Controllers
             var normalizedIndex = pageIndex < 1 ? 0 : pageIndex - 1;
             var normalizedSize = pageSize <= 0 ? 10 : pageSize;
 
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId" || c.Type == "sub");
+            Guid? currentUserId = userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
+
             var request = new PaginationRequest(normalizedIndex, normalizedSize);
 
-            var users = await _userService.FilterAsync(username, email, phone, role, request);
+            var users = await _userService.FilterAsync(username, email, phone, role, request, currentUserId);
 
             return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users filtered successfully"));
         }

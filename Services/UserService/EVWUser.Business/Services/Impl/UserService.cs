@@ -194,9 +194,9 @@ namespace EVWUser.Business.Services.Impl
             }
         }
 
-        public async Task<PaginatedResult<UserDto>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request)
+        public async Task<PaginatedResult<UserDto>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request, Guid? excludeUserId = null)
         {
-            var pagedUsers = await _userRepository.FilterAsync(username, email, phone, role, request);
+            var pagedUsers = await _userRepository.FilterAsync(username, email, phone, role, request, excludeUserId);
 
             var mapped = new List<UserDto>();
             foreach (var user in pagedUsers.Data)
