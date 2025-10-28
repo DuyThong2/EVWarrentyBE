@@ -2,8 +2,11 @@
 using BuildingBlocks.Pagination;
 using EVWUser.Business.Dtos;
 using EVWUser.Business.Services;
+using MassTransit.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace EVWUser.API.Controllers
 {
@@ -20,6 +23,7 @@ namespace EVWUser.API.Controllers
         }
 
         [HttpGet("filter")]
+        [Authorize]
         [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
         public async Task<ActionResult> Filter(
             [FromQuery] string? username,
@@ -32,7 +36,7 @@ namespace EVWUser.API.Controllers
             var normalizedIndex = pageIndex < 1 ? 0 : pageIndex - 1;
             var normalizedSize = pageSize <= 0 ? 10 : pageSize;
 
-            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId" || c.Type == "sub");
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             Guid? currentUserId = userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
 
             var request = new PaginationRequest(normalizedIndex, normalizedSize);
