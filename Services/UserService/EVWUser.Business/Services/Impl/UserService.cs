@@ -193,5 +193,24 @@ namespace EVWUser.Business.Services.Impl
                 }
             }
         }
+
+        public async Task<PaginatedResult<UserDto>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request)
+        {
+            var pagedUsers = await _userRepository.FilterAsync(username, email, phone, role, request);
+
+            var mapped = new List<UserDto>();
+            foreach (var user in pagedUsers.Data)
+            {
+                var userDto = await MapRolesToDto(user);
+                mapped.Add(userDto);
+            }
+
+            return new PaginatedResult<UserDto>(
+                pagedUsers.PageIndex,
+                pagedUsers.PageSize,
+                pagedUsers.Count,
+                mapped
+            );
+        }
     }
 }

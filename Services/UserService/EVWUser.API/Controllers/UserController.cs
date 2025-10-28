@@ -19,6 +19,27 @@ namespace EVWUser.API.Controllers
             _userService = userService;
         }
 
+        [HttpGet("filter")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> Filter(
+            [FromQuery] string? username,
+            [FromQuery] string? email,
+            [FromQuery] string? phone,
+            [FromQuery] string? role,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var normalizedIndex = pageIndex < 1 ? 0 : pageIndex - 1;
+            var normalizedSize = pageSize <= 0 ? 10 : pageSize;
+
+            var request = new PaginationRequest(normalizedIndex, normalizedSize);
+
+            var users = await _userService.FilterAsync(username, email, phone, role, request);
+
+            return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users filtered successfully"));
+        }
+
+
         /// <summary>
         /// Get user by Id
         /// </summary>

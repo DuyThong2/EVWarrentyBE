@@ -188,5 +188,52 @@ namespace EVWUser.Data.Repositories.Impl
                 throw new InternalServerException("Error soft deleting user");
             }
         }
+
+        public async Task<PaginatedResult<User>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request)
+        {
+            try
+            {
+                var query = _context.Users
+                    .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                    .AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(username))
+                    query = query.Where(u => EF.Functions.Like(u.Username.ToLower(), $"%{username.ToLower()}%"));
+
+                if (!string.IsNullOrWhiteSpace(email))
+                    query = query.Where(u => EF.Functions.Like(u.Email.ToLower(), $"%{email.ToLower()}%"));
+
+                if (!string.IsNullOrWhiteSpace(phone))
+                    query = query.Where(u => !string.IsNullOrEmpty(u.Phone) && u.Phone.Contains(phone));
+
+                if (!string.IsNullOrWhiteSpace(role))
+                {
+                    string normalizedRole = role.Trim().ToLower();
+                    query = query.Where(u =>
+                        u.UserRoles.Any(ur => ur.Role.Name.ToLower().Contains(normalizedRole)));
+                }
+
+                var totalCount = await query.LongCountAsync();
+
+                var data = await query
+                    .OrderByDescending(u => u.CreatedAt)
+                    .Skip(request.PageIndex * request.PageSize)
+                    .Take(request.PageSize)
+                    .ToListAsync();
+
+                return new PaginatedResult<User>(
+                    request.PageIndex,
+                    request.PageSize,
+                    totalCount,
+                    data
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("Error filtering users", ex.Message);
+            }
+        }
+
     }
 }
