@@ -25,10 +25,8 @@ namespace PartCatalog.Application.CQRS.Queries.GetPartByFilter
             CancellationToken cancellationToken)
         {
             var query = _context.Parts
-                .AsNoTracking()
-                .Include(p => p.Category)
-                .Include(p => p.Package)
-                    .ThenInclude(pkg => pkg.Category);
+                .AsNoTracking();
+                
 
 
             if (!string.IsNullOrWhiteSpace(request.Name))

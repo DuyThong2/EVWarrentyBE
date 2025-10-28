@@ -35,7 +35,7 @@ namespace EVWUser.API.Controllers
         /// <param name="token">The JWT token string</param>
         /// <returns>UserDto if token is valid</returns>
         [HttpPost("extract-token")]
-        [Authorize]
+        //[Authorize]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<UserDto>> ExtractToken()
