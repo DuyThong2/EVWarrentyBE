@@ -17,7 +17,12 @@ namespace EVWUser.Business.AutoMapper
             CreateMap<UserCreateRequest, User>();
 
             CreateMap<UserUpdateRequest, User>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember, context) =>
+                {
+                    if (opts.DestinationMember.Name == nameof(User.AvatarUrl))
+                        return true;
+                    return srcMember != null;
+                }));
         }
     }
 }
