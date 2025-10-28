@@ -174,7 +174,28 @@ namespace EVWUser.Data.Repositories.Impl
             {
                 var user = await GetByIdAsync(id);
 
-                user.Status = UserStatus.INACTIVE;
+                user.Status = UserStatus.LOCKED;
+                _context.Users.Update(user);
+
+                await _context.SaveChangesAsync();
+            }
+            catch (NotFoundException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new InternalServerException("Error soft deleting user");
+            }
+        }
+
+        public async Task SetActiveAsync(Guid id)
+        {
+            try
+            {
+                var user = await GetByIdAsync(id);
+
+                user.Status = UserStatus.ACTIVE;
                 _context.Users.Update(user);
 
                 await _context.SaveChangesAsync();

@@ -135,6 +135,11 @@ namespace EVWUser.Business.Services.Impl
             await _userRepository.SoftDeleteAsync(id);
         }
 
+        public async Task SetActiveAsync(Guid id)
+        {
+            await _userRepository.SetActiveAsync(id);
+        }
+
         public async Task<UserDto> MapRolesToDto(User user)
         {
             var userDto = _mapper.Map<UserDto>(user);

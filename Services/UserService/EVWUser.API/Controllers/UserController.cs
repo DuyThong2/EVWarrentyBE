@@ -135,5 +135,22 @@ namespace EVWUser.API.Controllers
             await _userService.SoftDeleteAsync(id);
             return Ok(ApiResponse<string>.Ok("User locked successfully"));
         }
+
+        /// <summary>
+        /// Set user as active
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPatch("set-active/{id:guid}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> SetActive(Guid id)
+        {
+            await _userService.SetActiveAsync(id);
+            return Ok(ApiResponse<string>.Ok("User activated successfully"));
+        }
     }
 }
