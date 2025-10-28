@@ -11,5 +11,7 @@ namespace EVWUser.Data.Repositories
         Task<User> CreateUserAsync(User user);
         Task<User> UpdateUserAsync(User user);
         Task SoftDeleteAsync(Guid id);
+        Task SetActiveAsync(Guid id);
+        Task<PaginatedResult<User>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request, Guid? excludeUserId = null);
     }
 }

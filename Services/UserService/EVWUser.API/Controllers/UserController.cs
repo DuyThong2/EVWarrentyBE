@@ -2,8 +2,11 @@
 using BuildingBlocks.Pagination;
 using EVWUser.Business.Dtos;
 using EVWUser.Business.Services;
+using MassTransit.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace EVWUser.API.Controllers
 {
@@ -19,13 +22,45 @@ namespace EVWUser.API.Controllers
             _userService = userService;
         }
 
+        [HttpGet("filter")]
+        //[Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(ApiResponse<PaginatedResult<UserDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> Filter(
+            [FromQuery] string? username,
+            [FromQuery] string? email,
+            [FromQuery] string? phone,
+            [FromQuery] string? role,
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var normalizedIndex = pageIndex < 1 ? 0 : pageIndex - 1;
+            var normalizedSize = pageSize <= 0 ? 10 : pageSize;
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            Guid? currentUserId = userIdClaim != null ? Guid.Parse(userIdClaim.Value) : null;
+
+            var request = new PaginationRequest(normalizedIndex, normalizedSize);
+
+            var users = await _userService.FilterAsync(username, email, phone, role, request, currentUserId);
+
+            return Ok(ApiResponse<PaginatedResult<UserDto>>.Ok(users, "Users filtered successfully"));
+        }
+
+
         /// <summary>
         /// Get user by Id
         /// </summary>
         /// <param name="id"></param>
         [HttpGet("{id:guid}")]
-        //[Authorize]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> GetById(Guid id)
         {
             var user = await _userService.GetByIdAsync(id);
@@ -59,6 +94,10 @@ namespace EVWUser.API.Controllers
         [HttpPost]
         //[Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> Create(UserCreateRequest request)
         {
             var created = await _userService.AddAsync(request);
@@ -70,8 +109,11 @@ namespace EVWUser.API.Controllers
         /// Update an existing user
         /// </summary>
         [HttpPut("{id:guid}")]
-        //[Authorize]
         [ProducesResponseType(typeof(ApiResponse<UserDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> Update(Guid id, UserUpdateRequest request)
         {
             var updated = await _userService.UpdateAsync(id, request);
@@ -84,10 +126,31 @@ namespace EVWUser.API.Controllers
         [HttpDelete("{id:guid}")]
         //[Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> SoftDelete(Guid id)
         {
             await _userService.SoftDeleteAsync(id);
             return Ok(ApiResponse<string>.Ok("User locked successfully"));
+        }
+
+        /// <summary>
+        /// Set user as active
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPatch("set-active/{id:guid}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> SetActive(Guid id)
+        {
+            await _userService.SetActiveAsync(id);
+            return Ok(ApiResponse<string>.Ok("User activated successfully"));
         }
     }
 }

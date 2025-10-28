@@ -13,6 +13,8 @@ namespace EVWUser.Business.Services
         Task<UserDto> AddAsync(UserCreateRequest request);
         Task<UserDto> UpdateAsync(Guid id, UserUpdateRequest request);
         Task SoftDeleteAsync(Guid id);
+        Task SetActiveAsync(Guid id);
         Task<UserDto> MapRolesToDto(User user);
+        Task<PaginatedResult<UserDto>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request, Guid? excludeUserId = null);
     }
 }

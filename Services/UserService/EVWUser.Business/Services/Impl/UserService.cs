@@ -135,6 +135,11 @@ namespace EVWUser.Business.Services.Impl
             await _userRepository.SoftDeleteAsync(id);
         }
 
+        public async Task SetActiveAsync(Guid id)
+        {
+            await _userRepository.SetActiveAsync(id);
+        }
+
         public async Task<UserDto> MapRolesToDto(User user)
         {
             var userDto = _mapper.Map<UserDto>(user);
@@ -192,6 +197,25 @@ namespace EVWUser.Business.Services.Impl
                     await _userRoleRepository.DeleteAsync(userRole.UserRoleId);
                 }
             }
+        }
+
+        public async Task<PaginatedResult<UserDto>> FilterAsync(string? username, string? email, string? phone, string? role, PaginationRequest request, Guid? excludeUserId = null)
+        {
+            var pagedUsers = await _userRepository.FilterAsync(username, email, phone, role, request, excludeUserId);
+
+            var mapped = new List<UserDto>();
+            foreach (var user in pagedUsers.Data)
+            {
+                var userDto = await MapRolesToDto(user);
+                mapped.Add(userDto);
+            }
+
+            return new PaginatedResult<UserDto>(
+                pagedUsers.PageIndex,
+                pagedUsers.PageSize,
+                pagedUsers.Count,
+                mapped
+            );
         }
     }
 }
