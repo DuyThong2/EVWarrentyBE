@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Pagination;
+using BuildingBlocks.Pagination;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.CQRS.Queries.GetWarrantyPolicyByFilter;

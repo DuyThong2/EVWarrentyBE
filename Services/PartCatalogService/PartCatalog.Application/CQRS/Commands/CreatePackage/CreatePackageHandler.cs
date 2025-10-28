@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using PartCatalog.Application.Commands.CreatePackage;
 using PartCatalog.Application.Data;
 using PartCatalog.Domain.Enums;
@@ -38,7 +38,8 @@ namespace PartCatalog.Application.Features.Packages.Handlers
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
                 Quantity = dto.Quantity,
-                Note = dto.Note
+                Note = dto.Note,
+                CategoryId = dto.CategoryId
             };
 
             _context.Packages.Add(entity);

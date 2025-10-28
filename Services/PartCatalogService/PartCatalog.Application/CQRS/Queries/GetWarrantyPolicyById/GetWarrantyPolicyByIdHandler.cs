@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.CQRS.Queries.GetWarrantyPolicyById;
 using PartCatalog.Application.Data;
@@ -23,6 +23,7 @@ namespace PartCatalog.Application.Features.WarrantyPolicies.Handlers
         {
             var entity = await _context.WarrantyPolicies
                 .Include(p => p.Package)
+                    .ThenInclude(pkg => pkg.Category)
                 .FirstOrDefaultAsync(p => p.PolicyId == request.PolicyId, cancellationToken);
 
             if (entity == null)

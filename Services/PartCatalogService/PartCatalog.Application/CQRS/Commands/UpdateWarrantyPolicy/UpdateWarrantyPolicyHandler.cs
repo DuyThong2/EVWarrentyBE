@@ -30,9 +30,9 @@ namespace PartCatalog.Application.CQRS.Commands.UpdateWarrantyPolicy
             // Cập nhật thông tin
             entity.Code = dto.Code;
             entity.Name = dto.Name;
-            if (!string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var typeValue))
+            if (!string.IsNullOrWhiteSpace(dto.Type) && Enum.TryParse<PolicyType>(dto.Type, true, out var typeValue))
             {
-                entity.Status = typeValue;
+                entity.Type = typeValue;
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Status) && Enum.TryParse<ActiveStatus>(dto.Status, true, out var statusValue))

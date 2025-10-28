@@ -18,6 +18,7 @@ namespace PartCatalog.Application
         {
             var package = await _context.Packages
                 .AsNoTracking()
+                .Include(p => p.Category)
                 .FirstOrDefaultAsync(p => p.PackageId == request.PackageId, cancellationToken);
 
             if (package == null)

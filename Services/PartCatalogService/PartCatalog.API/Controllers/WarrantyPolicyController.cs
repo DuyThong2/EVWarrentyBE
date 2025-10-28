@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PartCatalog.Application.CQRS.Commands.CreateWarrantyPolicy;
 using PartCatalog.Application.CQRS.Commands.DeleteWarrantyPolicy;
@@ -33,7 +33,7 @@ namespace PartCatalog.API.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Message);
 
-            return CreatedAtAction(nameof(GetById), new { id = result.PolicyId }, new { id = result.PolicyId });
+            return CreatedAtAction(nameof(GetById), new { id = result.PolicyId }, result);
         }
 
         // ===== Get By Id =====

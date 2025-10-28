@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.CQRS;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PartCatalog.Application.Data;
@@ -22,6 +22,9 @@ namespace PartCatalog.Application.CQRS.Queries.GetPartById
         {
             var part = await _context.Parts
                 .AsNoTracking()
+                .Include(x => x.Category)
+                .Include(x => x.Package)
+                    .ThenInclude(p => p.Category)
                 .FirstOrDefaultAsync(x => x.PartId == request.Id, cancellationToken);
 
             if (part == null)
