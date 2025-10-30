@@ -13,6 +13,7 @@ namespace Vehicle.Application.Extension
         {
             // ===== VehiclePart =====
             CreateMap<CreateVehiclePartDto, VehiclePart>()
+                .ForMember(d => d.PartId, opt => opt.Ignore()) // PartId is set in controller
                 .ForMember(d => d.Status, opt => opt.MapFrom(s =>
                     ParseEnumOrDefault(s.Status, PartStatus.Installed)))
                 .ForMember(d => d.Vehicle, opt => opt.Ignore());

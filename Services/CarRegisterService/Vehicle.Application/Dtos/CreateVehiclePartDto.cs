@@ -5,6 +5,7 @@ namespace Vehicle.Application.Dtos
 {
     public class CreateVehiclePartDto
     {
+        public Guid? PartId { get; set; }
         public Guid VehicleId { get; set; }
 
         public string Code { get; set; } = null!;
