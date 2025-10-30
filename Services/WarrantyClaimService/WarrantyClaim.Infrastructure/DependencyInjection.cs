@@ -1,9 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Amazon;
+using Amazon.S3;
+using BuildingBlocks.Storage.Extension;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 using WarrantyClaim.Application.Data;
 using WarrantyClaim.Infrastructure.Data;
+using WarrantyClaim.Infrastructure.Data.Interceptors;
+
 
 namespace WarrantyClaim.Infrastructure;
 public static class DependencyInjection
@@ -11,11 +15,16 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructureServices
         (this IServiceCollection services, IConfiguration configuration)
     {
+
+
+
+
+
         var connectionString = configuration.GetConnectionString("Database");
 
         // Add services to the container.
-        //services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
-        //services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
+        services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
 
         services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {

@@ -5,7 +5,9 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "yarpapigateway": "StartDebugging",
-        "warrantyclaim.api": "StartDebugging"
+        "warrantyclaim.api": "StartDebugging",
+        "vehicle.api": "StartDebugging",
+        "partcatalog.api": "StartDebugging"
       }
     }
   }

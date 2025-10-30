@@ -23,6 +23,10 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
                 .HasColumnName("partSerialNumber")
                 .HasMaxLength(100);
 
+            b.Property(x => x.VIN)
+                .HasColumnName("VIN")
+                .HasMaxLength(100);
+
             b.Property(x => x.PayAmount)
                 .HasColumnName("payAmount")
                 .HasPrecision(18, 2);

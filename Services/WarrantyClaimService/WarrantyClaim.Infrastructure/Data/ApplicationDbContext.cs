@@ -60,6 +60,10 @@ namespace WarrantyClaim.Infrastructure.Data
 
         //    return await base.SaveChangesAsync(cancellationToken);
         //}
+
+        //Add-Migration InitialCreate -Project WarrantyClaim.Infrastructure -StartupProject WarrantyClaim.API -OutputDir Data/Migrations
+        //Update-Database 20250923035726_InitClaimSchema -Project WarrantyClaim.Infrastructure -StartupProject WarrantyClaim.API
+        //Add-Migration Fix_FK_SetNull_Order -Project WarrantyClaim.Infrastructure -StartupProject WarrantyClaim.API -OutputDir Data/Migrations
     }
 }
 

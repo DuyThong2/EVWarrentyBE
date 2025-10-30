@@ -43,7 +43,7 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
             b.HasOne(x => x.ClaimItem)
                 .WithMany(x => x.WorkOrders)
                 .HasForeignKey(x => x.ClaimItemId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             b.HasOne(x => x.Technician)
                 .WithMany(x => x.WorkOrders)

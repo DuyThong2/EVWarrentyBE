@@ -10,6 +10,9 @@ namespace WarrantyClaim.Domain.Models
     {
         public Guid ClaimId { get; set; }
         public string? PartSerialNumber { get; set; }
+
+        public string? VIN { get; set; } 
+
         public decimal? PayAmount { get; set; }
         public string? PaidBy { get; set; }         
         public string? Note { get; set; }

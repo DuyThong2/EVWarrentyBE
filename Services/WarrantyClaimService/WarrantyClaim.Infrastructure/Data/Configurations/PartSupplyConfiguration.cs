@@ -33,6 +33,10 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
                 .HasColumnName("shipmentCode")
                 .HasMaxLength(50);
 
+            b.Property(x => x.OldPartSerialNumber)
+                .HasColumnName("OldPartSerialNumber")
+                .HasMaxLength(50);
+
             b.Property(x => x.ShipmentRef)
                 .HasColumnName("shipmentRef")
                 .HasMaxLength(80);
@@ -50,7 +54,9 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
             b.HasOne(x => x.ClaimItem)
                 .WithMany(x => x.PartSupplies)
                 .HasForeignKey(x => x.ClaimItemId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
+
+            
         }
     }
 }

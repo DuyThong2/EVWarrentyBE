@@ -1,9 +1,15 @@
 services:
 
   messagebroker:
-    image: rabbitmq
- 
-  
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq  
 
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
@@ -19,4 +25,34 @@ services:
     build:
       context: .
       dockerfile: Services/WarrantyClaimService/WarrantyClaim.API/Dockerfile
+
+  vehicledb:
+    image: mcr.microsoft.com/mssql/server
+
+  vehicleAPI:
+    image: giang/vehicleapi
+    build:
+      context: .
+      dockerfile: Services/CarRegisterService/Vehicle.API/Dockerfile
+
+  partdb:
+    image: mcr.microsoft.com/mssql/server
+
+  partcatalogAPI:
+    image: vunt/partcatalogapi
+    build:
+      context: .
+      dockerfile: Services/PartCatalogService/PartCatalog.API/Dockerfile
+
+  userdb:
+    image: mcr.microsoft.com/mssql/server
+
+  userAPI:
+    image: nhatk/userapi
+    build:
+      context: .
+      dockerfile: Services/UserService/EVWUser.API/Dockerfile
+
+volumes:
+  rabbitmq_data:
 

@@ -83,6 +83,8 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StaffId");
+
                     b.ToTable("claim", (string)null);
                 });
 
@@ -139,6 +141,11 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasDefaultValue("PENDING")
                         .HasColumnName("status");
 
+                    b.Property<string>("VIN")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("VIN");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClaimId");
@@ -153,7 +160,7 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("partSuplyId");
 
-                    b.Property<Guid>("ClaimItemId")
+                    b.Property<Guid?>("ClaimItemId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("claimItemId");
 
@@ -177,6 +184,11 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("newSerialNumber");
+
+                    b.Property<string>("OldPartSerialNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("OldPartSerialNumber");
 
                     b.Property<Guid?>("PartId")
                         .HasColumnType("uniqueidentifier")
@@ -246,8 +258,10 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasColumnName("staffId");
 
                     b.Property<string>("Status")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("ACTIVE")
                         .HasColumnName("status");
 
                     b.HasKey("Id");
@@ -262,7 +276,7 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("workorderId");
 
-                    b.Property<Guid>("ClaimItemId")
+                    b.Property<Guid?>("ClaimItemId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("claimItemId");
 
@@ -293,7 +307,7 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                         .HasDefaultValue("OPEN")
                         .HasColumnName("status");
 
-                    b.Property<Guid>("TechnicianId")
+                    b.Property<Guid?>("TechnicianId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("technicianId");
 
@@ -309,6 +323,16 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                     b.HasIndex("TechnicianId");
 
                     b.ToTable("workorder", (string)null);
+                });
+
+            modelBuilder.Entity("WarrantyClaim.Domain.Models.Claim", b =>
+                {
+                    b.HasOne("WarrantyClaim.Domain.Models.Technician", "Technician")
+                        .WithMany()
+                        .HasForeignKey("StaffId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Technician");
                 });
 
             modelBuilder.Entity("WarrantyClaim.Domain.Models.ClaimItem", b =>
@@ -327,8 +351,7 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                     b.HasOne("WarrantyClaim.Domain.Models.ClaimItem", "ClaimItem")
                         .WithMany("PartSupplies")
                         .HasForeignKey("ClaimItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ClaimItem");
                 });
@@ -338,14 +361,12 @@ namespace WarrantyClaim.Infrastructure.Data.Migrations
                     b.HasOne("WarrantyClaim.Domain.Models.ClaimItem", "ClaimItem")
                         .WithMany("WorkOrders")
                         .HasForeignKey("ClaimItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("WarrantyClaim.Domain.Models.Technician", "Technician")
                         .WithMany("WorkOrders")
                         .HasForeignKey("TechnicianId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ClaimItem");
 

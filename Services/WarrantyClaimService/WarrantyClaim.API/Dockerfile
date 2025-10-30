@@ -18,6 +18,7 @@ COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj",
 COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
 COPY ["Services/WarrantyClaimService/WarrantyClaim.Domain/WarrantyClaim.Domain.csproj", "Services/WarrantyClaimService/WarrantyClaim.Domain/"]
 COPY ["Services/WarrantyClaimService/WarrantyClaim.Infrastructure/WarrantyClaim.Infrastructure.csproj", "Services/WarrantyClaimService/WarrantyClaim.Infrastructure/"]
+COPY ["BuildingBlocks/BuildingBlocks.Storage/BuildingBlocks.Storage.csproj", "BuildingBlocks/BuildingBlocks.Storage/"]
 RUN dotnet restore "./Services/WarrantyClaimService/WarrantyClaim.API/WarrantyClaim.API.csproj"
 COPY . .
 WORKDIR "/src/Services/WarrantyClaimService/WarrantyClaim.API"

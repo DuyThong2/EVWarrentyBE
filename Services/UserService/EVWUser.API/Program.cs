@@ -1,0 +1,200 @@
+﻿using BuildingBlocks.Behaviors;
+using BuildingBlocks.Email;
+using BuildingBlocks.Exceptions.Handler;
+using EVWUser.API.Extensions;
+using EVWUser.Data.Repositories;
+using EVWUser.Data.Repositories.Impl;
+using EVWUser.Business.Services;
+using EVWUser.Business.Services.Impl;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using static System.Net.Mime.MediaTypeNames;
+using EVWUser.Business.AutoMapper;
+using EVWUser.Data;
+using BuildingBlocks.Messaging.MassTransit;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
+
+// AutoMapper
+builder.Services.AddAutoMapper(cfg => { }, typeof(AutoMapperProfiles).Assembly);
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddEmailSender(
+    host: "smtp.gmail.com",
+    port: 587,
+    username: "trankimnha272727@gmail.com",
+    password: "bjzi qbqv cokr utsv");
+
+// Configuration
+
+builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+// Jwt
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = ctx =>
+            {
+                ctx.Response.StatusCode = 401;
+                ctx.Response.ContentType = "application/json";
+                return ctx.Response.WriteAsync("{\"status\":401,\"message\":\"Unauthorized: Invalid token\"}");
+            },
+            OnChallenge = ctx =>
+            {
+                ctx.HandleResponse();
+                ctx.Response.StatusCode = 401;
+                ctx.Response.ContentType = "application/json";
+                return ctx.Response.WriteAsync("{\"status\":401,\"message\":\"Unauthorized: Token is missing or expired\"}");
+            },
+            OnForbidden = ctx =>
+            {
+                ctx.Response.StatusCode = 403;
+                ctx.Response.ContentType = "application/json";
+                return ctx.Response.WriteAsync("{\"status\":403,\"message\":\"Forbidden: You don't have permission to access this resource\"}");
+            }
+        };
+    });
+
+
+//Cross-Cutting Services
+
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    // XML docs
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        options.IncludeXmlComments(xmlPath, true);
+
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "User API", Version = "v1" });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter token: Bearer {your JWT token}"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policyBuilder =>
+    {
+        policyBuilder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+builder.Services.AddAuthorization();
+
+
+
+var app = builder.Build();
+
+app.UseExceptionHandler();
+
+//app.MapGet("/", () => "Hello World!");
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    await app.InitializeDatabaseAsync();
+}
+
+// Order of middlewares is important
+//app.UseHttpsRedirection();
+
+app.UseRouting();
+//app.UseExceptionHandler();
+//app.UseCors("CorsPolicy");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Swagger middleware
+app.UseSwagger(
+//    c =>
+//{
+//    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+//    {
+//        swaggerDoc.Servers = new List<OpenApiServer>
+//        {
+//            new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }
+//        };
+//    });
+//}
+
+);
+
+
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API v1");
+});
+
+app.MapControllers();
+
+app.Run();

@@ -63,6 +63,11 @@ namespace WarrantyClaim.Infrastructure.Data.Configurations
                 .HasForeignKey(x => x.ClaimId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            b.HasOne(x => x.Technician)
+               .WithMany() // nếu Technician có property Claim thì thay bằng .WithOne(t => t.Claim)
+               .HasForeignKey(x => x.StaffId)
+               .OnDelete(DeleteBehavior.SetNull);
+
             //b.HasMany(x => x.WorkOrders)
             //    .WithOne(x => x.Claim)
             //    .HasForeignKey(x => x.ClaimId)
