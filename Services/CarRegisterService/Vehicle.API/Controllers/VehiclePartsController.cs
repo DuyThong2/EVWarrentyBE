@@ -129,7 +129,7 @@ namespace Vehicle.API.Controllers
                     throw new BadRequestException("Request body is required");
 
                 var entity = _mapper.Map<Vehicle.Domain.Models.VehiclePart>(payload);
-                entity.PartId = Guid.NewGuid();
+                entity.PartId = payload.PartId ?? Guid.NewGuid();
 
                 var id = await _repository.CreateAsync(entity, cancellationToken);
 
