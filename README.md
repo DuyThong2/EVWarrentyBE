@@ -32,24 +32,13 @@ The system is designed to ensure scalability, flexibility, and fault isolation u
 
 ### 🧠 Core Components
 
-| Component | Description |
-
-|------------|-------------|
-
-| **YARP API Gateway** | Routes client requests to appropriate microservices. |
-
-| **User Service** | Manages authentication, roles, and user profiles. |
-
-| **Vehicle Service** | Handles vehicle registration, ownership, and service history. |
-
-| **Part Catalog Service** | Manages parts, packages, categories, and warranty policies. |
-
-| **Warranty Service** | Handles warranty claims, validations, and service center actions. |
-
-| **RabbitMQ + MassTransit** | Provides message-based communication between services. |
-
-| **Database** | Each service has its own schema (isolated per domain). |
-
+* **YARP API Gateway:** Routes client requests to appropriate microservices.
+* **User Service:** Manages authentication, roles, and user profiles.
+* **Vehicle Service:** Handles vehicle registration, ownership, and service history.
+* **Part Catalog Service:** Manages parts, packages, categories, and warranty policies.
+* **Warranty Service:** Handles warranty claims, validations, and service center actions.
+* **RabbitMQ + MassTransit:** Provides message-based communication between services.
+* **Database:** Each service has its own schema (isolated per domain).
 
 
 ---
@@ -60,7 +49,7 @@ The system is designed to ensure scalability, flexibility, and fault isolation u
 
 
 
-### 🅰️ a) Warranty Flow
+### a) Warranty Flow
 
 1. Customer submits a **warranty claim** through the system.  
 
@@ -80,7 +69,7 @@ The system is designed to ensure scalability, flexibility, and fault isolation u
 
 
 
-### 🅱️ b) Service Flow
+### b) Service Flow
 
 1. Service center receives a **maintenance/service request**.  
 
@@ -98,7 +87,7 @@ The system is designed to ensure scalability, flexibility, and fault isolation u
 
 
 
-### 🆎 c) Recall / Service Campaign Flow
+### c) Recall / Service Campaign Flow
 
 1. Manufacturer issues a **recall campaign** for specific models or parts.  
 
@@ -118,26 +107,12 @@ The system is designed to ensure scalability, flexibility, and fault isolation u
 
 ## 🗂️ Service Databases
 
-
-
 Each microservice has an independent database.  
-
 Example links (replace with your actual GitHub paths):
 
-
-
-| Service | Database Script |
-
-|----------|------------------|
-
-| **User Service** | [UserDb.sql](https://github.com/your-org/evwarranty-system/blob/main/db/UserDb.sql) |
-
-| **Vehicle Service** | [VehicleDb.sql](https://github.com/your-org/evwarranty-system/blob/main/db/VehicleDb.sql) |
-
-| **Part Catalog Service** | [PartCatalogDb.sql](https://github.com/your-org/evwarranty-system/blob/main/db/PartCatalogDb.sql) |
-
-| **Warranty Service** | [WarrantyDb.sql](https://github.com/your-org/evwarranty-system/blob/main/db/WarrantyDb.sql) |
-
-
+* **User Service:** [UserDb.sql](https://drive.google.com/file/d/1_ShH0lGOrbOR1UBfh02l3aXM8vUMWXFO/view?usp=drive_link)
+* **Vehicle Service:** [VehicleDb.sql](https://drive.google.com/file/d/1zQZlYvRpqAROBqwAdBF3TRuo8Ks6e7Xr/view?usp=drive_link)
+* **Part Catalog Service:** [PartCatalogDb.sql](https://drive.google.com/file/d/16aGlZORzOiLHgYd-inlcfpjrPqnGnjGc/view?usp=drive_link)
+* **Warranty Service:** [WarrantyClaimDb.sql](https://drive.google.com/file/d/1PlhzLBugZPs9ERmkURU1DBODAoVmpORu/view?usp=drive_link)
 
 ---
