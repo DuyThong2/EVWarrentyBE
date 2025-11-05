@@ -107,8 +107,7 @@ The system is designed to ensure scalability, flexibility, and fault isolation u
 
 ## 🗂️ Service Databases
 
-Each microservice has an independent database.  
-Example links (replace with your actual GitHub paths):
+Each microservice has an independent database:
 
 * **User Service:** [UserDb.sql](https://drive.google.com/file/d/1_ShH0lGOrbOR1UBfh02l3aXM8vUMWXFO/view?usp=drive_link)
 * **Vehicle Service:** [VehicleDb.sql](https://drive.google.com/file/d/1zQZlYvRpqAROBqwAdBF3TRuo8Ks6e7Xr/view?usp=drive_link)
